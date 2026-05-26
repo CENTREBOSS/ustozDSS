@@ -755,6 +755,43 @@ body {
 /* ---- HIDDEN class ---- */
 .lesson-btn.hidden { display: none !important; }
 
+/* ---- CACHE MARK ---- */
+.cache-mark {
+  position: absolute;
+  bottom: 2px; right: 3px;
+  font-size: 0.55rem;
+  line-height: 1;
+  opacity: 0.7;
+}
+
+/* ---- DOWNLOAD PROGRESS BAR ---- */
+#dl-progress {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  background: rgba(0,10,40,0.9);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 5px 8px;
+}
+#dl-bar {
+  flex: 1;
+  height: 5px;
+  background: linear-gradient(90deg, var(--red), var(--blue-bright));
+  border-radius: 3px;
+  width: 0%;
+  transition: width 0.15s ease;
+  box-shadow: 0 0 8px var(--blue-glow);
+}
+#dl-pct {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--blue-bright);
+  min-width: 32px;
+  text-align: right;
+}
+
 /* =====================
    RESPONSIVE
    ===================== */
@@ -1001,12 +1038,51 @@ window.addEventListener('DOMContentLoaded', () => {
   setFooterDate();
 });
 
-// ── LOCALSTORAGE ──────────────────────────────────
+// ── LOCALSTORAGE (rang holatlari) ─────────────────
 function loadStates() {
   try { states = JSON.parse(localStorage.getItem('cyStates') || '{}'); } catch { states = {}; }
 }
 function saveStates() {
   try { localStorage.setItem('cyStates', JSON.stringify(states)); } catch {}
+}
+
+// ── INDEXEDDB (audio cache) ────────────────────────
+// Har bir dars audiosi birinchi marta yuklanib IDB'da saqlanadi.
+// Keyingi bosmada to'g'ri IDB'dan o'qiladi — internet kerak emas.
+
+const DB_NAME    = 'CyberAudioCache';
+const DB_VERSION = 1;
+const STORE      = 'audios';
+let   idb        = null;
+
+function openIDB() {
+  return new Promise((res, rej) => {
+    if (idb) return res(idb);
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = e => e.target.result.createObjectStore(STORE);
+    req.onsuccess = e => { idb = e.target.result; res(idb); };
+    req.onerror   = e => rej(e.target.error);
+  });
+}
+
+async function getCached(id) {
+  const db = await openIDB();
+  return new Promise((res, rej) => {
+    const tx  = db.transaction(STORE, 'readonly');
+    const req = tx.objectStore(STORE).get(String(id));
+    req.onsuccess = e => res(e.target.result || null);
+    req.onerror   = e => rej(e.target.error);
+  });
+}
+
+async function putCached(id, blob) {
+  const db = await openIDB();
+  return new Promise((res, rej) => {
+    const tx  = db.transaction(STORE, 'readwrite');
+    const req = tx.objectStore(STORE).put(blob, String(id));
+    req.onsuccess = () => res();
+    req.onerror   = e => rej(e.target.error);
+  });
 }
 
 // ── RENDER GRID ───────────────────────────────────
@@ -1031,27 +1107,88 @@ function renderGrid(query) {
     btn.addEventListener('click', () => playLesson(lesson.id));
     grid.appendChild(btn);
   });
+
+  // Cache holati belgisini yangilash
+  refreshCacheIcons();
 }
 
-// ── PLAY ──────────────────────────────────────────
-function playLesson(id) {
+// Keshda bor darslarni belgilash (⬇ tugmachasi)
+async function refreshCacheIcons() {
+  const db = await openIDB().catch(() => null);
+  if (!db) return;
+  document.querySelectorAll('.lesson-btn').forEach(async btn => {
+    const id  = btn.dataset.id;
+    const has = await getCached(id).catch(() => null);
+    const mark = btn.querySelector('.cache-mark');
+    if (has && !mark) {
+      const m = document.createElement('span');
+      m.className = 'cache-mark';
+      m.title = 'Offline saqlangan';
+      m.textContent = '💾';
+      btn.appendChild(m);
+    }
+  });
+}
+
+// ── PLAY (yuklab ol → keyin o'yna) ────────────────
+async function playLesson(id) {
   const lesson = LESSONS.find(l => l.id === id);
   if (!lesson) return;
+
+  // Agar allaqachon shu dars o'ynalyapti — to'xtat/davom et
+  if (currentId === id) {
+    const a = document.getElementById('main-audio');
+    a.paused ? a.play() : a.pause();
+    return;
+  }
+
   currentId = id;
-
-  const audio      = document.getElementById('main-audio');
-  const nowPlaying = document.getElementById('now-playing');
-
-  audio.src = toDirectURL(lesson.url);
-  audio.load();
-  audio.play().catch(() => {});
-  nowPlaying.textContent = `▶ ${lesson.id}. ${lesson.title.toUpperCase()}`;
   renderGrid(document.getElementById('search-input').value);
+  setNowPlaying(`⏳ Yuklanmoqda… ${lesson.id}. ${lesson.title.toUpperCase()}`);
+
+  try {
+    // 1. Keshdan tekshir
+    let blob = await getCached(id);
+
+    if (!blob) {
+      // 2. Yuklab ol
+      setNowPlaying(`⬇ Yuklanmoqda… ${lesson.id}. ${lesson.title.toUpperCase()}`);
+      showProgress(0);
+
+      const directURL = toDirectURL(lesson.url);
+      blob = await downloadWithProgress(directURL, pct => showProgress(pct));
+
+      // 3. IDB'ga saqlash
+      await putCached(id, blob);
+      hideProgress();
+      refreshCacheIcons();
+    } else {
+      hideProgress();
+    }
+
+    // 4. O'yna
+    const blobURL = URL.createObjectURL(blob);
+    const audio   = document.getElementById('main-audio');
+    audio.src     = blobURL;
+    audio.load();
+    await audio.play();
+    setNowPlaying(`▶ ${lesson.id}. ${lesson.title.toUpperCase()}`);
+
+  } catch(err) {
+    console.error(err);
+    hideProgress();
+    setNowPlaying(`❌ Xato: ${lesson.title} yuklanmadi`);
+    currentId = null;
+    renderGrid(document.getElementById('search-input').value);
+  }
+}
+
+function setNowPlaying(txt) {
+  document.getElementById('now-playing').textContent = txt;
 }
 
 function toDirectURL(url) {
   if (!url) return '';
-  // www.dropbox.com  →  dl.dropboxusercontent.com  +  raw=1
   if (url.includes('dropbox.com') && !url.includes('dl.dropboxusercontent.com')) {
     return url
       .replace('www.dropbox.com', 'dl.dropboxusercontent.com')
@@ -1059,6 +1196,44 @@ function toDirectURL(url) {
       + (url.includes('?') ? '&raw=1' : '?raw=1');
   }
   return url;
+}
+
+// Fetch + progress
+async function downloadWithProgress(url, onProgress) {
+  const resp = await fetch(url);
+  if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+
+  const total  = parseInt(resp.headers.get('Content-Length') || '0');
+  const reader = resp.body.getReader();
+  const chunks = [];
+  let   loaded = 0;
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    chunks.push(value);
+    loaded += value.length;
+    if (total > 0) onProgress(Math.round(loaded / total * 100));
+  }
+  return new Blob(chunks, { type: 'audio/mpeg' });
+}
+
+// ── PROGRESS BAR ─────────────────────────────────
+function showProgress(pct) {
+  let bar = document.getElementById('dl-progress');
+  if (!bar) {
+    bar = document.createElement('div');
+    bar.id = 'dl-progress';
+    bar.innerHTML = `<div id="dl-bar"></div><span id="dl-pct">0%</span>`;
+    document.getElementById('audio-player').insertBefore(bar, document.getElementById('main-audio'));
+  }
+  bar.style.display = 'flex';
+  document.getElementById('dl-bar').style.width  = pct + '%';
+  document.getElementById('dl-pct').textContent  = pct + '%';
+}
+function hideProgress() {
+  const bar = document.getElementById('dl-progress');
+  if (bar) bar.style.display = 'none';
 }
 
 // ── AUDIO SYNC ────────────────────────────────────
