@@ -1,757 +1,629 @@
-<!DOCTYPE html>
+html_code = """<!DOCTYPE html>
 <html lang="uz">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CyberAcademy — Kiberxavfsizlik O'quv Markazi</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
-<style>
-:root {
-  --ink:  #080812;
-  --ink2: #0d0d1f;
-  --ink3: #12122a;
-  --red:  #ff2244;
-  --red2: #cc0022;
-  --red-g: rgba(255,34,68,0.35);
-  --blue: #00aaff;
-  --blue2:#0055bb;
-  --blue-g:rgba(0,170,255,0.35);
-  --cyan: #00ffee;
-  --cyan-g:rgba(0,255,238,0.22);
-  --txt:  #c0d4f0;
-  --dim:  #4a5a7a;
-  --bdr:  rgba(0,170,255,0.18);
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{
-  background:var(--ink);color:var(--txt);
-  font-family:'Exo 2',sans-serif;
-  min-height:100vh;overflow-x:hidden;position:relative;
-}
-/* GRID BG */
-body::before{
-  content:'';position:fixed;inset:0;
-  background-image:
-    linear-gradient(rgba(0,170,255,0.035) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(0,170,255,0.035) 1px,transparent 1px);
-  background-size:48px 48px;
-  animation:gridDrift 22s linear infinite;
-  pointer-events:none;z-index:0;
-}
-@keyframes gridDrift{0%{transform:translateY(0)}100%{transform:translateY(48px)}}
-body::after{
-  content:'';position:fixed;inset:0;
-  background:
-    radial-gradient(ellipse at 50% 0%,rgba(0,170,255,0.06) 0%,transparent 60%),
-    radial-gradient(ellipse at 15% 85%,rgba(255,34,68,0.05) 0%,transparent 50%);
-  pointer-events:none;z-index:0;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futuristik Kiber-Yuz Pleeri</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
 
-/* ── HEADER ── */
-header{
-  position:fixed;top:0;left:0;right:0;z-index:1000;
-  background:rgba(8,8,18,0.93);backdrop-filter:blur(18px);
-  border-bottom:1px solid var(--bdr);
-  padding:11px 24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;
-}
-.logo{
-  font-family:'Orbitron',sans-serif;font-weight:900;font-size:1.05rem;
-  color:var(--cyan);text-shadow:0 0 22px var(--cyan-g);
-  letter-spacing:2px;white-space:nowrap;flex-shrink:0;
-}
-.logo span{color:var(--red)}
-.search-wrap{position:relative;flex:1;min-width:180px;max-width:400px}
-.search-wrap input{
-  width:100%;background:rgba(0,170,255,0.05);border:1px solid var(--bdr);
-  border-radius:6px;padding:8px 12px 8px 36px;
-  color:var(--txt);font-family:'Share Tech Mono',monospace;font-size:0.83rem;
-  outline:none;transition:border-color .3s,box-shadow .3s;
-}
-.search-wrap input::placeholder{color:var(--dim)}
-.search-wrap input:focus{border-color:var(--blue);box-shadow:0 0 12px var(--blue-g)}
-.s-icon{
-  position:absolute;left:10px;top:50%;transform:translateY(-50%);
-  color:var(--dim);font-size:0.82rem;pointer-events:none;
-}
-.hd-stats{
-  font-family:'Share Tech Mono',monospace;font-size:0.7rem;
-  color:var(--dim);margin-left:auto;flex-shrink:0;
-}
-.hd-stats b{color:var(--cyan)}
+        body {
+            background: radial-gradient(circle at center, #0d0221 0%, #030008 100%);
+            color: #fff;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+        }
 
-/* ── MAIN ── */
-main{
-  position:relative;z-index:1;padding-top:76px;
-  display:flex;flex-direction:column;align-items:center;min-height:100vh;
-}
+        /* Neon fon effektlari */
+        .bg-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(138, 43, 226, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            pointer-events: none;
+            animation: pulseGlow 8s ease-in-out infinite alternate;
+        }
 
-/* ── HOLO STAGE ── */
-.holo-stage{
-  position:relative;width:270px;height:310px;
-  margin:28px auto 16px;flex-shrink:0;
-}
-.holo-wrap{
-  position:absolute;inset:0;
-  animation:floatPath 14s ease-in-out infinite;
-  transform-origin:center center;
-}
-@keyframes floatPath{
-  0%  {transform:translate(0,0)      rotate(0deg);   animation-timing-function:cubic-bezier(.45,.05,.55,.95)}
-  10% {transform:translate(14px,-20px) rotate(1.2deg); animation-timing-function:ease-in}
-  22% {transform:translate(-8px,-36px) rotate(-.8deg); animation-timing-function:ease-out}
-  35% {transform:translate(22px,-12px) rotate(1.8deg); animation-timing-function:cubic-bezier(.45,.05,.55,.95)}
-  48% {transform:translate(-4px,8px)  rotate(-.4deg); animation-timing-function:ease-in}
-  60% {transform:translate(-20px,-24px)rotate(.9deg);  animation-timing-function:ease-out}
-  72% {transform:translate(10px,-38px) rotate(-1.6deg);animation-timing-function:cubic-bezier(.45,.05,.55,.95)}
-  85% {transform:translate(18px,4px)  rotate(.6deg);  animation-timing-function:ease-in}
-  100%{transform:translate(0,0)      rotate(0deg);}
-}
-.holo-face-svg{
-  width:100%;height:100%;
-  filter:drop-shadow(0 0 16px rgba(0,255,238,.65)) drop-shadow(0 0 38px rgba(0,170,255,.3));
-}
-.holo-scanlines{
-  position:absolute;inset:0;
-  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,255,238,.028) 3px,rgba(0,255,238,.028) 4px);
-  border-radius:50%;pointer-events:none;
-  animation:scanPulse 3.2s ease-in-out infinite;
-}
-@keyframes scanPulse{0%,100%{opacity:.5}50%{opacity:1}}
-.holo-ring{position:absolute;border-radius:50%;border:1px solid rgba(0,255,238,.28);animation:ringP 3s ease-in-out infinite}
-.holo-ring:nth-child(1){inset:-18px;animation-delay:0s}
-.holo-ring:nth-child(2){inset:-34px;border-color:rgba(0,170,255,.14);animation-delay:.9s}
-.holo-ring:nth-child(3){inset:-54px;border-color:rgba(255,34,68,.09);animation-delay:1.8s}
-@keyframes ringP{0%,100%{opacity:.25;transform:scale(1)}50%{opacity:1;transform:scale(1.04)}}
-.holo-label{
-  position:absolute;bottom:-26px;left:50%;transform:translateX(-50%);
-  font-family:'Share Tech Mono',monospace;font-size:.68rem;
-  color:var(--cyan);letter-spacing:3px;text-transform:uppercase;
-  text-shadow:0 0 10px var(--cyan-g);white-space:nowrap;
-}
-.holo-label::before{content:'▶ ';color:var(--red);animation:blink 1s step-end infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+        @keyframes pulseGlow {
+            0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.6; }
+            100% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+        }
 
-/* ── PLAYER ── */
-.player-bar{width:100%;max-width:680px;margin:44px auto 22px;padding:0 18px}
-.player-card{
-  background:rgba(0,170,255,.04);border:1px solid var(--bdr);border-radius:12px;
-  padding:14px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
-  position:relative;overflow:hidden;
-}
-.player-card::before{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(0,255,238,.025) 0%,transparent 60%);
-  pointer-events:none;
-}
-.np-info{flex:1;min-width:100px}
-.np-title{font-family:'Orbitron',monospace;font-size:.72rem;color:var(--cyan);letter-spacing:1.5px;text-transform:uppercase}
-.np-sub{font-family:'Share Tech Mono',monospace;font-size:.68rem;color:var(--dim);margin-top:3px}
-#audioPlayer{display:none}
-.waveform{display:flex;align-items:center;gap:2px;height:30px}
-.wbar{width:3px;background:var(--blue);border-radius:2px;height:3px;transition:height .05s}
-.wbar.on{background:var(--cyan)}
-.p-ctrl{display:flex;align-items:center;gap:8px}
-.cbtn{
-  background:none;border:1px solid var(--bdr);color:var(--blue);
-  width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:.82rem;
-  display:flex;align-items:center;justify-content:center;transition:all .3s;
-}
-.cbtn:hover{background:var(--blue);color:var(--ink);box-shadow:0 0 14px var(--blue-g);border-color:var(--blue)}
-.cbtn.play{width:42px;height:42px;background:rgba(0,170,255,.1);font-size:.95rem;border-color:var(--blue)}
-.cbtn.play:hover{background:var(--blue)}
+        /* Yuqori sarlavha paneli */
+        header {
+            z-index: 10;
+            text-align: center;
+            margin-top: 10px;
+        }
 
-/* ── LESSONS ── */
-.lessons-sec{width:100%;max-width:1200px;padding:0 18px 60px;position:relative;z-index:1}
-.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px}
-.sec-title{font-family:'Orbitron',monospace;font-size:.75rem;letter-spacing:3px;color:var(--dim);text-transform:uppercase}
-.sec-title b{color:var(--red)}
-.legend{display:flex;gap:12px;font-family:'Share Tech Mono',monospace;font-size:.66rem;color:var(--dim)}
-.ldot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px}
-.ldot.marked{background:var(--red);box-shadow:0 0 6px var(--red-g)}
-.ldot.cur{background:var(--blue);box-shadow:0 0 6px var(--blue-g)}
-.filter-tabs{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap}
-.tab{
-  background:transparent;border:1px solid var(--bdr);color:var(--dim);
-  font-family:'Share Tech Mono',monospace;font-size:.7rem;
-  padding:4px 13px;border-radius:20px;cursor:pointer;
-  transition:all .25s;text-transform:uppercase;letter-spacing:1px;
-}
-.tab:hover,.tab.on{border-color:var(--blue);color:var(--blue);background:rgba(0,170,255,.07);box-shadow:0 0 9px var(--blue-g)}
-.tab.on-red{border-color:var(--red)!important;color:var(--red)!important;background:rgba(255,34,68,.07)!important;box-shadow:0 0 9px var(--red-g)!important}
-.lessons-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(60px,1fr));gap:5px}
-.lbtn{
-  position:relative;aspect-ratio:1;
-  background:rgba(0,170,255,.045);border:1px solid rgba(0,170,255,.1);
-  border-radius:6px;color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:.7rem;
-  cursor:pointer;transition:all .22s;display:flex;align-items:center;justify-content:center;
-  user-select:none;-webkit-user-select:none;overflow:hidden;
-}
-.lbtn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,255,238,.035) 0%,transparent 70%);opacity:0;transition:opacity .3s}
-.lbtn:hover{border-color:var(--blue);color:var(--blue);background:rgba(0,170,255,.11);box-shadow:0 0 11px var(--blue-g);transform:scale(1.07);z-index:2}
-.lbtn:hover::before{opacity:1}
-.lbtn.marked{background:rgba(255,34,68,.11);border-color:var(--red);color:var(--red);box-shadow:0 0 9px var(--red-g)}
-.lbtn.cur{background:rgba(0,170,255,.17);border-color:var(--blue);color:#fff;box-shadow:0 0 15px var(--blue-g)}
-.lbtn.no-aud{opacity:.3;cursor:not-allowed}
-.lbtn.no-aud:hover{transform:none;border-color:rgba(0,170,255,.1);color:var(--dim);background:rgba(0,170,255,.045);box-shadow:none}
-.mdot{position:absolute;top:3px;right:3px;width:5px;height:5px;background:var(--red);border-radius:50%;box-shadow:0 0 5px var(--red-g);display:none}
-.lbtn.marked .mdot{display:block}
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: linear-gradient(45deg, #00f2fe, #4facfe, #ff007f, #7928ca);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientText 6s ease infinite;
+            text-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+        }
 
-/* ── TOAST ── */
-.toast-c{position:fixed;bottom:22px;right:22px;z-index:3000;display:flex;flex-direction:column;gap:8px}
-.toast{
-  background:var(--ink3);border:1px solid var(--blue);border-radius:7px;
-  padding:9px 14px;font-family:'Share Tech Mono',monospace;font-size:.72rem;
-  color:var(--txt);box-shadow:0 0 18px var(--blue-g);
-  animation:tIn .28s ease;max-width:250px;
-}
-.toast.err{border-color:var(--red);box-shadow:0 0 18px var(--red-g)}
-@keyframes tIn{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:translateX(0)}}
+        @keyframes gradientText {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
 
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:var(--ink)}
-::-webkit-scrollbar-thumb{background:var(--blue2);border-radius:3px}
+        p.subtitle {
+            font-size: 12px;
+            color: #6c7a9c;
+            margin-top: 5px;
+            letter-spacing: 1px;
+        }
 
-@media(max-width:600px){
-  .holo-stage{width:200px;height:230px}
-  .lessons-grid{grid-template-columns:repeat(auto-fill,minmax(48px,1fr))}
-  .hd-stats{display:none}
-}
-</style>
+        /* Asosiy Canvas konteyneri */
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 5;
+        }
+
+        canvas {
+            display: block;
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        /* Pastki boshqaruv paneli */
+        .controls-panel {
+            background: rgba(13, 2, 33, 0.7);
+            border: 1px solid rgba(0, 242, 254, 0.2);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 20px 30px;
+            width: 100%;
+            max-width: 600px;
+            z-index: 10;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .controls-panel:hover {
+            border-color: rgba(255, 0, 127, 0.4);
+            box-shadow: 0 10px 40px rgba(121, 40, 202, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+        }
+
+        .playlist {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        /* Scrollbar dizayni */
+        .playlist::-webkit-scrollbar {
+            height: 4px;
+        }
+        .playlist::-webkit-scrollbar-thumb {
+            background: rgba(0, 242, 254, 0.3);
+            border-radius: 10px;
+        }
+
+        .track-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #a0aec0;
+            padding: 8px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 13px;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .track-btn:hover {
+            background: rgba(0, 242, 254, 0.1);
+            color: #00f2fe;
+            border-color: rgba(0, 242, 254, 0.4);
+        }
+
+        .track-btn.active {
+            background: linear-gradient(135deg, rgba(0, 242, 254, 0.2), rgba(121, 40, 202, 0.2));
+            color: #fff;
+            border-color: #00f2fe;
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+        }
+
+        .player-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .play-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #00f2fe, #7928ca);
+            color: white;
+            font-size: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            flex-shrink: 0;
+        }
+
+        .play-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 0 25px rgba(255, 0, 127, 0.6);
+            background: linear-gradient(135deg, #00f2fe, #ff007f);
+        }
+
+        .play-btn:active {
+            transform: scale(0.95);
+        }
+
+        .track-info-block {
+            flex-grow: 1;
+        }
+
+        .current-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e2e8f0;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 350px;
+        }
+
+        .status-text {
+            font-size: 11px;
+            color: #00f2fe;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Loading animatsiyasi */
+        .loader {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #00f2fe;
+            animation: spin 1s ease infinite;
+            margin-left: 5px;
+            vertical-align: middle;
+            display: none;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* CORS ogohlantirish xabari modal */
+        #cors-toast {
+            position: absolute;
+            top: 20px;
+            background: rgba(220, 38, 38, 0.9);
+            border: 1px solid #ef4444;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            max-width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            transform: translateY(-150%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 100;
+        }
+
+        #cors-toast.show {
+            transform: translateY(0);
+        }
+    </style>
 </head>
 <body>
 
-<header>
-  <div class="logo">CYBER<span>ACE</span></div>
-  <div class="search-wrap">
-    <span class="s-icon">⌕</span>
-    <input type="text" id="searchInput" placeholder="Dars raqami yoki mavzu...">
-  </div>
-  <div class="hd-stats">
-    Jami: <b id="totalCount">0</b> &nbsp;|&nbsp; Belgilangan: <b id="markedCount">0</b>
-  </div>
-</header>
+    <div class="bg-glow"></div>
 
-<main>
-  <!-- HOLOGRAPHIC FACE -->
-  <div class="holo-stage">
-    <div class="holo-ring"></div>
-    <div class="holo-ring"></div>
-    <div class="holo-ring"></div>
-    <div class="holo-wrap" id="holoWrap">
-      <svg class="holo-face-svg" viewBox="0 0 280 320" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <radialGradient id="fg" cx="50%" cy="44%" r="52%">
-            <stop offset="0%" stop-color="#162838"/>
-            <stop offset="55%" stop-color="#091820"/>
-            <stop offset="100%" stop-color="#040c14"/>
-          </radialGradient>
-          <radialGradient id="eg" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="#00ffee"/>
-            <stop offset="100%" stop-color="#00aaff" stop-opacity="0.2"/>
-          </radialGradient>
-          <filter id="fglow"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-          <linearGradient id="scanG" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#00ffee" stop-opacity="0"/>
-            <stop offset="50%" stop-color="#00ffee" stop-opacity="0.14"/>
-            <stop offset="100%" stop-color="#00ffee" stop-opacity="0"/>
-          </linearGradient>
-          <clipPath id="fc"><ellipse cx="140" cy="155" rx="108" ry="130"/></clipPath>
-        </defs>
-
-        <!-- Face base -->
-        <ellipse cx="140" cy="155" rx="108" ry="130" fill="url(#fg)" filter="url(#fglow)"/>
-        <ellipse cx="140" cy="155" rx="108" ry="130" fill="none" stroke="#00ffee" stroke-width="0.5" stroke-opacity="0.45"/>
-
-        <!-- Forehead lines -->
-        <line x1="78" y1="58" x2="202" y2="58" stroke="#00aaff" stroke-width="0.5" stroke-opacity="0.25"/>
-        <line x1="92" y1="48" x2="188" y2="48" stroke="#00ffee" stroke-width="0.35" stroke-opacity="0.18"/>
-
-        <!-- Circuit dots forehead -->
-        <circle cx="118" cy="73" r="1.4" fill="#00ffee" fill-opacity="0.55"/>
-        <circle cx="140" cy="68" r="2" fill="#00ffee" fill-opacity="0.8"/>
-        <circle cx="162" cy="73" r="1.4" fill="#00ffee" fill-opacity="0.55"/>
-        <line x1="118" y1="73" x2="140" y2="68" stroke="#00ffee" stroke-width="0.4" stroke-opacity="0.4"/>
-        <line x1="140" y1="68" x2="162" y2="73" stroke="#00ffee" stroke-width="0.4" stroke-opacity="0.4"/>
-
-        <!-- Temple tech -->
-        <line x1="38" y1="143" x2="58" y2="143" stroke="#00ffee" stroke-width="0.8" stroke-opacity="0.4"/>
-        <line x1="36" y1="149" x2="53" y2="149" stroke="#00aaff" stroke-width="0.5" stroke-opacity="0.28"/>
-        <circle cx="35" cy="143" r="2" fill="#00ffee" fill-opacity="0.45"/>
-        <line x1="242" y1="143" x2="222" y2="143" stroke="#00ffee" stroke-width="0.8" stroke-opacity="0.4"/>
-        <line x1="244" y1="149" x2="227" y2="149" stroke="#00aaff" stroke-width="0.5" stroke-opacity="0.28"/>
-        <circle cx="245" cy="143" r="2" fill="#00ffee" fill-opacity="0.45"/>
-
-        <!-- Cheek glow -->
-        <ellipse cx="83" cy="174" rx="20" ry="11" fill="#00aaff" fill-opacity="0.035"/>
-        <ellipse cx="197" cy="174" rx="20" ry="11" fill="#00aaff" fill-opacity="0.035"/>
-
-        <!-- Left eye -->
-        <g filter="url(#fglow)">
-          <ellipse cx="105" cy="134" rx="23" ry="14" fill="#041525"/>
-          <ellipse cx="105" cy="134" rx="23" ry="14" fill="none" stroke="#00ffee" stroke-width="1"/>
-          <ellipse cx="105" cy="134" rx="15" ry="9.5" fill="#051e32"/>
-          <ellipse cx="105" cy="134" rx="8.5" ry="8.5" fill="url(#eg)"/>
-          <ellipse cx="105" cy="134" rx="5" ry="5" fill="#00111e"/>
-          <ellipse cx="103" cy="132" rx="2" ry="2" fill="#00ffee" fill-opacity="0.85"/>
-          <ellipse cx="105" cy="134" rx="8.5" ry="8.5" fill="none" stroke="#00ffee" stroke-width="0.5" stroke-opacity="0.65"/>
-          <ellipse cx="105" cy="134" rx="11.5" ry="11.5" fill="none" stroke="#00aaff" stroke-width="0.4" stroke-opacity="0.35"/>
-        </g>
-
-        <!-- Right eye -->
-        <g filter="url(#fglow)">
-          <ellipse cx="175" cy="134" rx="23" ry="14" fill="#041525"/>
-          <ellipse cx="175" cy="134" rx="23" ry="14" fill="none" stroke="#00ffee" stroke-width="1"/>
-          <ellipse cx="175" cy="134" rx="15" ry="9.5" fill="#051e32"/>
-          <ellipse cx="175" cy="134" rx="8.5" ry="8.5" fill="url(#eg)"/>
-          <ellipse cx="175" cy="134" rx="5" ry="5" fill="#00111e"/>
-          <ellipse cx="173" cy="132" rx="2" ry="2" fill="#00ffee" fill-opacity="0.85"/>
-          <ellipse cx="175" cy="134" rx="8.5" ry="8.5" fill="none" stroke="#00ffee" stroke-width="0.5" stroke-opacity="0.65"/>
-          <ellipse cx="175" cy="134" rx="11.5" ry="11.5" fill="none" stroke="#00aaff" stroke-width="0.4" stroke-opacity="0.35"/>
-        </g>
-
-        <!-- Eyebrows -->
-        <path d="M82 117 Q105 108 128 115" stroke="#00aaff" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-opacity="0.65"/>
-        <path d="M152 115 Q175 108 198 117" stroke="#00aaff" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-opacity="0.65"/>
-
-        <!-- Nose -->
-        <path d="M132 147 Q137 163 133 173 Q140 180 147 173 Q143 163 148 147" stroke="#00aaff" stroke-width="0.7" fill="none" stroke-opacity="0.28"/>
-        <path d="M126 175 Q140 183 154 175" stroke="#00aaff" stroke-width="0.9" fill="none" stroke-opacity="0.32"/>
-
-        <!-- MOUTH — controlled by JS -->
-        <g id="mouthG">
-          <path id="mUpper" d="M112 206 Q122 202 131 205 Q140 199 149 205 Q158 202 168 206" stroke="#00ffee" stroke-width="1.2" fill="none" stroke-opacity="0.7"/>
-          <path id="mLower" d="M112 206 Q140 215 168 206" stroke="#00ffee" stroke-width="1.4" fill="none" stroke-opacity="0.7"/>
-          <path id="mFill"  d="M112 206 Q140 215 168 206 Q158 202 149 205 Q140 199 131 205 Q122 202 112 206Z" fill="#00ffee" fill-opacity="0"/>
-          <path id="mTeeth" d="M118 207 Q140 210 162 207" stroke="#aaffee" stroke-width="0.6" fill="none" stroke-opacity="0" id="teeth"/>
-        </g>
-
-        <!-- Jaw -->
-        <path d="M54 178 Q44 232 114 268" stroke="#00aaff" stroke-width="0.65" fill="none" stroke-opacity="0.22"/>
-        <path d="M226 178 Q236 232 166 268" stroke="#00aaff" stroke-width="0.65" fill="none" stroke-opacity="0.22"/>
-        <path d="M114 268 Q140 278 166 268" stroke="#00aaff" stroke-width="0.6" fill="none" stroke-opacity="0.2"/>
-
-        <!-- Scan bar -->
-        <rect x="32" y="30" width="216" height="20" fill="url(#scanG)" clip-path="url(#fc)">
-          <animate attributeName="y" from="30" to="285" dur="3.2s" repeatCount="indefinite" calcMode="ease-in-out"/>
-        </rect>
-
-        <!-- Glitch -->
-        <g id="glitch" opacity="0">
-          <line x1="58" y1="138" x2="222" y2="138" stroke="#ff2244" stroke-width="0.8" stroke-opacity="0.55"/>
-          <line x1="58" y1="144" x2="180" y2="144" stroke="#00ffee" stroke-width="0.5" stroke-opacity="0.45"/>
-        </g>
-
-        <text x="38" y="302" fill="#00aaff" font-family="Share Tech Mono,monospace" font-size="6.5" fill-opacity="0.4">AI-TUTOR v4.0 :: CYBERXAVFSIZLIK</text>
-      </svg>
-      <div class="holo-scanlines"></div>
+    <div id="cors-toast">
+        ⚠️ Google Drive CORS cheklovi tufayli brauzer audioni blokladi. Proxy rejimiga o'tildi...
     </div>
-    <div class="holo-label" id="holoStatus">Tayyor</div>
-  </div>
 
-  <!-- PLAYER -->
-  <div class="player-bar">
-    <div class="player-card">
-      <div class="np-info">
-        <div class="np-title" id="npTitle">Dars tanlanmagan</div>
-        <div class="np-sub"   id="npSub">Tugmani bosing → dars boshlanadi</div>
-      </div>
-      <div class="waveform" id="waveform"></div>
-      <div class="p-ctrl">
-        <button class="cbtn" id="btnPrev">◀</button>
-        <button class="cbtn play" id="btnPlay">▶</button>
-        <button class="cbtn" id="btnNext">▶▶</button>
-      </div>
-      <audio id="audioPlayer" crossorigin="anonymous"></audio>
+    <header>
+        <h1>Cybernetic AI Face</h1>
+        <p class="subtitle">Google Drive audio oqimi va dinamik yuz vizualizatsiyasi</p>
+    </header>
+
+    <div class="canvas-container">
+        <canvas id="faceCanvas"></canvas>
     </div>
-  </div>
 
-  <!-- LESSONS -->
-  <div class="lessons-sec">
-    <div class="sec-hdr">
-      <div class="sec-title">Darslar — <b id="visCount">0</b> ta</div>
-      <div class="legend">
-        <span><span class="ldot cur"></span>Joriy</span>
-        <span><span class="ldot marked"></span>Belgilangan</span>
-      </div>
+    <div class="controls-panel">
+        <div class="playlist" id="playlist">
+            </div>
+
+        <div class="player-row">
+            <button class="play-btn" id="playBtn">▶</button>
+            <div class="track-info-block">
+                <div class="current-title" id="currentTitle">Kutish rejimi...</div>
+                <div class="status-text" id="statusText">Darsni tanlang va pleyni bosing <span class="loader" id="loader"></span></div>
+            </div>
+        </div>
     </div>
-    <div class="filter-tabs">
-      <button class="tab on" data-f="all">Barchasi</button>
-      <button class="tab" data-f="audio">Audio bor</button>
-      <button class="tab" data-f="marked">Belgilangan</button>
-    </div>
-    <div class="lessons-grid" id="lessonsGrid"></div>
-  </div>
-</main>
 
-<div class="toast-c" id="toastC"></div>
+    <audio id="audioPlayer" crossorigin="anonymous"></audio>
 
-<script>
-// ═══════════════════════════════════════════════════════════════
-//  DARSLAR MA'LUMOTLAR BAZASI
-//  Format: { raqam: { url: "dropbox_link", t: "Mavzu nomi" } }
-//  Ko'proq qo'shish uchun quyidagi LESSONS obyektiga yozing.
-// ═══════════════════════════════════════════════════════════════
-const LESSONS = {
-  // ─── Google Drive FILE_ID ni shu yerga yozing ───────────────────────────
-  // Drive-da faylni oching → Share → "Anyone with the link" → linkdan
-  // https://drive.google.com/file/d/  FILE_ID  /view?usp=sharing
-  // faqat FILE_ID qismini ko'chiring (1ABC...xyz ko'rinishida)
-  //
-  1:  { url: "https://drive.google.com/file/d/1SvevHbIsbKUY1cy4BVGWmk77U2EhOHcZ/view?usp=drivesdk",  t: "Kirish: Kiberxavfsizlik nima?" },
-  2:  { url: "1xKjEXAMPLE_FILE_ID_2_xxxxxxxxxxxxxxxxx",  t: "Tarmoq asoslari (OSI modeli)" },
-  3:  { url: "1xKjEXAMPLE_FILE_ID_3_xxxxxxxxxxxxxxxxx",  t: "IP, TCP, UDP protokollari" },
-  4:  { url: "1xKjEXAMPLE_FILE_ID_4_xxxxxxxxxxxxxxxxx",  t: "Linux buyruqlar qatori" },
-  5:  { url: "1xKjEXAMPLE_FILE_ID_5_xxxxxxxxxxxxxxxxx",  t: "Kali Linux o'rnatish" },
-  6:  { url: "1xKjEXAMPLE_FILE_ID_6_xxxxxxxxxxxxxxxxx",  t: "Nmap bilan port skanerlash" },
-  7:  { url: "1xKjEXAMPLE_FILE_ID_7_xxxxxxxxxxxxxxxxx",  t: "Metasploit Framework" },
-  8:  { url: "1xKjEXAMPLE_FILE_ID_8_xxxxxxxxxxxxxxxxx",  t: "SQL Injection asoslari" },
-  9:  { url: "1xKjEXAMPLE_FILE_ID_9_xxxxxxxxxxxxxxxxx",  t: "XSS hujumlari" },
-  10: { url: "1xKjEXAMPLE_FILE_ID_10_xxxxxxxxxxxxxxxxx", t: "CSRF va himoya usullari" },
-  // ... 1000 gacha shu tartibda davom eting
-};
+    <script>
+        // 1. Google Drive darslar ro'yxati (FILE_ID laringizni shu yerga yozasiz)
+        const LESSONS = {
+            1: { url: "1SvevHbIsbKUY1cy4BVGWmk77U2EhOHcZ", t: "1-Dars: Kirish va Tizim integratsiyasi" },
+            2: { url: "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74", t: "2-Dars: Sun'iy intellekt va kiber-nutq" },
+            3: { url: "2CyjNWt1YSB6oGNLwCeCAAkhvVVrqumuG85", t: "3-Dars: Tarmoq xavfsizligi asoslari" }
+        };
 
-// ═══════════════════════════════════════════════════════════════
-//  YORDAMCHI: Dropbox URL — dl=1 bo'lsa xuddi shundayligicha
-// ═══════════════════════════════════════════════════════════════
-function toDirectUrl(raw) {
-  if (!raw) return '';
-  const url = raw.trim();
+        // Global o'zgaruvchilar
+        const audio = document.getElementById('audioPlayer');
+        const canvas = document.getElementById('faceCanvas');
+        const ctx = canvas.getContext('2d');
+        const playBtn = document.getElementById('playBtn');
+        const currentTitle = document.getElementById('currentTitle');
+        const statusText = document.getElementById('statusText');
+        const loader = document.getElementById('loader');
+        const toast = document.getElementById('cors-toast');
 
-  // To'liq Google Drive share/view linki
-  // https://drive.google.com/file/d/FILE_ID/view...
-  const m1 = url.match(/\/file\/d\/([A-Za-z0-9_-]+)/);
-  if (m1) return 'https://drive.google.com/uc?export=download&id=' + m1[1];
+        let audioCtx, analyser, source, dataArray, bufferLength;
+        let isSetup = false;
+        let currentTrackId = null;
 
-  // https://drive.google.com/open?id=FILE_ID
-  const m2 = url.match(/[?&]id=([A-Za-z0-9_-]+)/);
-  if (m2 && url.includes('drive.google.com'))
-    return 'https://drive.google.com/uc?export=download&id=' + m2[1];
+        // Yuzning silliq harakatlanishi (Floating) uchun fizik o'zgaruvchilar
+        let faceX = 0;
+        let faceY = 0;
+        let targetX = 0;
+        let targetY = 0;
+        let time = 0;
 
-  // Faqat FILE_ID — harf/raqam/_/- dan iborat, 25+ belgi
-  if (/^[A-Za-z0-9_-]{25,}$/.test(url))
-    return 'https://drive.google.com/uc?export=download&id=' + url;
+        // Canvas o'lchamini moslashtirish
+        function resizeCanvas() {
+            canvas.width = 500;
+            canvas.height = 500;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
 
-  // Dropbox — dl=1 bo'lsa o'zgartirilmaydi
-  if (url.includes('dropbox.com'))
-    return url.includes('dl=1') ? url : url.replace('dl=0', 'dl=1');
+        // Pleylist tugmalarini yaratish
+        const playlistContainer = document.getElementById('playlist');
+        Object.keys(LESSONS).forEach(key => {
+            const btn = document.createElement('button');
+            btn.className = 'track-btn';
+            btn.innerText = `Dars ${key}`;
+            btn.addEventListener('click', () => selectTrack(key));
+            playlistContainer.appendChild(btn);
+        });
 
-  // Boshqa to'g'ridan-to'g'ri URL
-  return url;
-}
+        // Darsni tanlash funksiyasi
+        function selectTrack(id) {
+            currentTrackId = id;
+            
+            // Faol tugma stilini yangilash
+            document.querySelectorAll('.track-btn').forEach((btn, index) => {
+                btn.classList.toggle('active', (index + 1) == id);
+            });
 
-// ═══════════════════════════════════════════════════════════════
-//  HOLAT
-// ═══════════════════════════════════════════════════════════════
-const MARK_KEY   = 'cyberace_marked';
-let markedSet    = new Set(JSON.parse(localStorage.getItem(MARK_KEY) || '[]'));
-let currentLesson= null;
-let isPlaying    = false;
-let searchQuery  = '';
-let filterMode   = 'all';
-const TOTAL      = 1000;
+            currentTitle.innerText = LESSONS[id].t;
+            statusText.innerText = "Yuklanmoqda...";
+            loader.style.display = 'inline-block';
 
-// Web Audio
-let audioCtx     = null;
-let analyser     = null;
-let sourceNode   = null;
-let audioData    = null;
-let rafId        = null;
-let isTalking    = false;
+            // Google Drive to'g'ridan-to'g'ri yuklash havolasini shakllantirish
+            const fileId = LESSONS[id].url;
+            audio.src = `https://drive.google.com/uc?export=download&id=${fileId}`;
+            audio.load();
 
-// ═══════════════════════════════════════════════════════════════
-//  DOM
-// ═══════════════════════════════════════════════════════════════
-const grid      = document.getElementById('lessonsGrid');
-const audio     = document.getElementById('audioPlayer');
-const btnPlay   = document.getElementById('btnPlay');
-const btnPrev   = document.getElementById('btnPrev');
-const btnNext   = document.getElementById('btnNext');
-const npTitle   = document.getElementById('npTitle');
-const npSub     = document.getElementById('npSub');
-const holoSt    = document.getElementById('holoStatus');
-const searchInp = document.getElementById('searchInput');
-const totalEl   = document.getElementById('totalCount');
-const markedEl  = document.getElementById('markedCount');
-const visEl     = document.getElementById('visCount');
-const waveformEl= document.getElementById('waveform');
+            // Avtomatik ijro etishga urinish
+            audio.play().then(() => {
+                initAudioAPI();
+                playBtn.innerText = "⏸";
+                statusText.innerText = "Jonli ijro etilmoqda";
+                loader.style.display = 'none';
+            }).catch(err => {
+                console.log("Play blocked, waiting for user click.");
+                playBtn.innerText = "▶";
+                statusText.innerText = "Tugmani bosing";
+                loader.style.display = 'none';
+            });
+        }
 
-const mUpper    = document.getElementById('mUpper');
-const mLower    = document.getElementById('mLower');
-const mFill     = document.getElementById('mFill');
-const teeth     = document.getElementById('mTeeth');
-const glitch    = document.getElementById('glitch');
+        // Web Audio API ni ishga tushirish (Faqat foydalanuvchi harakatidan keyin)
+        function initAudioAPI() {
+            if (isSetup) return;
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioCtx.createAnalyser();
+                source = audioCtx.createMediaElementSource(audio);
+                source.connect(analyser);
+                analyser.connect(audioCtx.destination);
 
-// ═══════════════════════════════════════════════════════════════
-//  WAVEFORM BARS (vizual)
-// ═══════════════════════════════════════════════════════════════
-const BAR_N = 18;
-const wBars = [];
-for (let i = 0; i < BAR_N; i++) {
-  const b = document.createElement('div');
-  b.className = 'wbar';
-  waveformEl.appendChild(b);
-  wBars.push(b);
-}
+                analyser.fftSize = 256;
+                bufferLength = analyser.frequencyBinCount;
+                dataArray = new Uint8Array(bufferLength);
+                isSetup = true;
+            } catch (e) {
+                console.error("Audio API error: ", e);
+            }
+        }
 
-// ═══════════════════════════════════════════════════════════════
-//  WEB AUDIO SETUP — faqat bir marta yaratiladi
-// ═══════════════════════════════════════════════════════════════
-function initAudioCtx() {
-  if (audioCtx) return;
-  audioCtx  = new (window.AudioContext || window.webkitAudioContext)();
-  analyser  = audioCtx.createAnalyser();
-  analyser.fftSize = 64;
-  audioData = new Uint8Array(analyser.frequencyBinCount);
-  sourceNode = audioCtx.createMediaElementSource(audio);
-  sourceNode.connect(analyser);
-  analyser.connect(audioCtx.destination);
-}
+        // Play/Pause tugmasi boshqaruvi
+        playBtn.addEventListener('click', () => {
+            if (!currentTrackId) {
+                selectTrack(1); // Agar hech narsa tanlanmagan bo'lsa 1-darsni qo'yish
+                return;
+            }
 
-// ═══════════════════════════════════════════════════════════════
-//  ANIMATSIYA LOOP — audio danasidan real-vaqt og'iz + to'lqin
-// ═══════════════════════════════════════════════════════════════
-function animLoop() {
-  rafId = requestAnimationFrame(animLoop);
+            initAudioAPI();
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
 
-  if (!analyser) return;
-  analyser.getByteFrequencyData(audioData);
+            if (audio.paused) {
+                audio.play().then(() => {
+                    playBtn.innerText = "⏸";
+                    statusText.innerText = "Jonli ijro etilmoqda";
+                }).catch(handleCORS);
+            } else {
+                audio.pause();
+                playBtn.innerText = "▶";
+                statusText.innerText = "To'xtatildi";
+            }
+        });
 
-  // O'rtacha amplituda (past chastotalar — nutq uchun muhim)
-  let sum = 0;
-  const n = Math.min(12, audioData.length);
-  for (let i = 0; i < n; i++) sum += audioData[i];
-  const avg = sum / n / 255; // 0..1
+        // Google Drive ba'zan CORS xatosi bersa, muqobil Proxy tizimiga o'tish
+        function handleCORS(err) {
+            console.warn("CORS/Fetch error catch:", err);
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 5000);
+            
+            // Muqobil jamoat proxy serveri orqali qayta urinish (CORSni aylanib o'tish)
+            if (currentTrackId && !audio.src.includes('cors-anywhere')) {
+                const fileId = LESSONS[currentTrackId].url;
+                audio.src = `https://corsproxy.io/?` + encodeURIComponent(`https://drive.google.com/uc?export=download&id=${fileId}`);
+                audio.load();
+                audio.play();
+            }
+        }
 
-  // Og'iz qimirlashi — analayzer danasidan, kechikishsiz
-  updateMouth(avg);
+        // Audio xatoliklarni kuzatish
+        audio.addEventListener('error', (e) => {
+            console.error("Audio error event:", e);
+            handleCORS(e);
+        });
 
-  // Waveform barlar
-  for (let i = 0; i < BAR_N; i++) {
-    const idx = Math.floor(i * audioData.length / BAR_N);
-    const v   = audioData[idx] / 255;
-    const h   = isPlaying ? Math.max(3, v * 28) : 3;
-    wBars[i].style.height = h + 'px';
-    wBars[i].classList.toggle('on', isPlaying && v > 0.3);
-  }
 
-  // Tasodifiy glitch
-  if (isPlaying && Math.random() < 0.008) {
-    glitch.setAttribute('opacity', '0.8');
-    setTimeout(() => glitch.setAttribute('opacity', '0'), 70);
-  }
-}
+        // ==========================================
+        //  KUCHLI KIBER-YUZ CHIZISH VA ANIMATSIYASI
+        // ==========================================
+        function drawFace() {
+            requestAnimationFrame(drawFace);
 
-// ═══════════════════════════════════════════════════════════════
-//  OG'IZ SVG YANGILASH
-// ═══════════════════════════════════════════════════════════════
-function updateMouth(amp) {
-  const cy   = 206;
-  const open = amp * 18;   // maks 18px ochiladi
-  const uRise= amp * 5;    // yuqori lab ko'tarilishi
+            time += 0.02;
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
 
-  mUpper.setAttribute('d',
-    `M112 ${cy} Q122 ${cy-uRise*0.8} 131 ${cy-uRise*0.5} Q140 ${cy-uRise} 149 ${cy-uRise*0.5} Q158 ${cy-uRise*0.8} 168 ${cy}`
-  );
-  mLower.setAttribute('d',
-    `M112 ${cy} Q140 ${cy+open} 168 ${cy}`
-  );
-  mFill.setAttribute('d',
-    `M112 ${cy} Q122 ${cy-uRise*0.8} 131 ${cy-uRise*0.5} Q140 ${cy-uRise} 149 ${cy-uRise*0.5} Q158 ${cy-uRise*0.8} 168 ${cy} Q140 ${cy+open} 112 ${cy}Z`
-  );
-  mFill.setAttribute('fill-opacity', (amp * 0.35).toString());
-  teeth.setAttribute('stroke-opacity', (amp > 0.2 ? amp * 0.6 : 0).toString());
-}
+            // chastota ma'lumotlarini olish
+            let volume = 0;
+            let lowFreq = 0;  // Bass (og'iz uchun)
+            let highFreq = 0; // High (ko'zlar uchun)
 
-function resetMouth() {
-  mUpper.setAttribute('d','M112 206 Q122 202 131 205 Q140 199 149 205 Q158 202 168 206');
-  mLower.setAttribute('d','M112 206 Q140 215 168 206');
-  mFill.setAttribute('fill-opacity','0');
-  teeth.setAttribute('stroke-opacity','0');
-}
+            if (isSetup && !audio.paused) {
+                analyser.getByteFrequencyData(dataArray);
+                
+                // Ovoz balandligini hisoblash
+                let sum = 0;
+                for (let i = 0; i < bufferLength; i++) {
+                    sum += dataArray[i];
+                    if (i < bufferLength / 3) lowFreq += dataArray[i];
+                    else highFreq += dataArray[i];
+                }
+                volume = sum / bufferLength;
+                lowFreq = (lowFreq / (bufferLength / 3)) / 255; // 0 - 1 oraliq
+                highFreq = (highFreq * 3 / bufferLength) / 255;
+            }
 
-// ═══════════════════════════════════════════════════════════════
-//  AUDIO — ijro
-// ═══════════════════════════════════════════════════════════════
-function playLesson(num) {
-  const data = LESSONS[num];
-  if (!data || !data.url) { toast('Bu dars uchun audio yo\'q', true); return; }
+            // Tozalash effekti (orqada yorug'lik izi qolishi uchun biroz shaffoflik bilan)
+            ctx.fillStyle = 'rgba(3, 0, 8, 0.25)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  initAudioCtx();
-  if (audioCtx.state === 'suspended') audioCtx.resume();
+            // SILLIQ FLOATING (Ekranda mayin suzib yurish fizikasi)
+            targetX = Math.sin(time * 0.8) * 25 + Math.cos(time * 0.4) * 10;
+            targetY = Math.cos(time * 0.7) * 20 + Math.sin(time * 0.3) * 15;
 
-  currentLesson = num;
-  audio.src = toDirectUrl(data.url);
+            // Silliqlash (Linear Interpolation)
+            faceX += (targetX - faceX) * 0.05;
+            faceY += (targetY - faceY) * 0.05;
 
-  audio.play().then(() => {
-    isPlaying = true;
-    btnPlay.textContent = '⏸';
-    npTitle.textContent = `Dars ${num}${data.t ? ' — ' + data.t : ''}`;
-    npSub.textContent   = 'Ijro etilmoqda...';
-    holoSt.textContent  = 'Dars ' + num;
-    isTalking = true;
-    if (!rafId) animLoop();
-    renderGrid();
-    toast(`▶ Dars ${num} boshlandi`);
-  }).catch(e => {
-    toast('Audio yuklanmadi. URL ni tekshiring.', true);
-    console.error(e);
-  });
-}
+            const fx = cx + faceX;
+            const fy = cy + faceY;
 
-function togglePlay() {
-  if (!currentLesson) { toast('Avval dars tanlang', true); return; }
-  initAudioCtx();
-  if (audioCtx.state === 'suspended') audioCtx.resume();
-  if (audio.paused) {
-    audio.play();
-    isPlaying  = true;
-    isTalking  = true;
-    btnPlay.textContent = '⏸';
-    if (!rafId) animLoop();
-  } else {
-    audio.pause();
-    isPlaying  = false;
-    isTalking  = false;
-    btnPlay.textContent = '▶';
-    npSub.textContent   = 'Pauza';
-    holoSt.textContent  = 'Pauza';
-    resetMouth();
-  }
-}
+            // 1. TASHQI KIBER-XALQALAR (Ko'k va Siyohrang neon effekt)
+            ctx.save();
+            ctx.shadowBlur = 15 + volume * 0.3;
+            ctx.shadowColor = '#00f2fe';
+            
+            // Birinchi aylana (Chastotaga qarab aylanadi va tebranadi)
+            ctx.strokeStyle = 'rgba(0, 242, 254, 0.4)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(fx, fy, 160 + volume * 0.4, 0, Math.PI * 2);
+            ctx.stroke();
 
-audio.addEventListener('ended', () => {
-  isPlaying = false; isTalking = false;
-  btnPlay.textContent = '▶';
-  npSub.textContent   = 'Tugadi ✓';
-  holoSt.textContent  = 'Tayyor';
-  resetMouth();
-});
+            // Ikkinchi uzuq-uzuq aylana (Siyohrang neon)
+            ctx.shadowColor = '#7928ca';
+            ctx.strokeStyle = 'rgba(121, 40, 202, 0.6)';
+            ctx.lineWidth = 3;
+            ctx.setLineDash([15, 25]);
+            ctx.beginPath();
+            ctx.arc(fx, fy, 140 - volume * 0.2, time, time + Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
 
-audio.addEventListener('error', () => {
-  isPlaying = false; isTalking = false;
-  btnPlay.textContent = '▶';
-  npSub.textContent   = 'Xatolik!';
-  resetMouth();
-});
+            // 2. YUZ TUZILISHI (Kiber kontur liniyalari)
+            ctx.strokeStyle = 'rgba(0, 242, 254, 0.25)';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([]);
+            
+            // Yuz oval shakli
+            ctx.beginPath();
+            ctx.moveTo(fx - 70, fy - 80);
+            ctx.quadraticCurveTo(fx - 90, fy, fx - 50, fy + 90);
+            ctx.quadraticCurveTo(fx, fy + 140, fx + 50, fy + 90);
+            ctx.quadraticCurveTo(fx + 90, fy, fx + 70, fy - 80);
+            ctx.stroke();
 
-btnPlay.addEventListener('click', togglePlay);
+            // Markaziy texnologik chiziq (Eshak)
+            ctx.strokeStyle = 'rgba(255, 0, 127, 0.3)';
+            ctx.beginPath();
+            ctx.moveTo(fx, fy - 110);
+            ctx.lineTo(fx, fy - 40);
+            ctx.moveTo(fx, fy + 10);
+            ctx.lineTo(fx, fy + 50);
+            ctx.stroke();
 
-btnPrev.addEventListener('click', () => {
-  if (!currentLesson) return;
-  for (let n = currentLesson - 1; n >= 1; n--) {
-    if (LESSONS[n]) { playLesson(n); return; }
-  }
-  toast('Oldingi dars yo\'q', true);
-});
+            // 3. KO'ZLAR (Futuristik kiber ko'zlar - Qizil va neon ko'k)
+            const eyeSpacing = 35;
+            const eyeY = fy - 25;
+            
+            // Gapirganda ko'zning qisilib-ochilishi yoki kengayishi
+            const eyePulse = highFreq * 15;
 
-btnNext.addEventListener('click', () => {
-  if (!currentLesson) return;
-  for (let n = currentLesson + 1; n <= TOTAL; n++) {
-    if (LESSONS[n]) { playLesson(n); return; }
-  }
-  toast('Keyingi dars yo\'q', true);
-});
+            // Chap ko'z (Glow effekti bilan)
+            ctx.save();
+            ctx.shadowBlur = 10 + volume * 0.2;
+            ctx.shadowColor = '#00f2fe';
+            ctx.fillStyle = '#00f2fe';
+            ctx.beginPath();
+            ctx.arc(fx - eyeSpacing, eyeY, 6 + eyePulse * 0.2, 0, Math.PI * 2);
+            ctx.fill();
+            // Ko'z atrofi kiber halqasi
+            ctx.strokeStyle = 'rgba(0, 242, 254, 0.6)';
+            ctx.beginPath();
+            ctx.arc(fx - eyeSpacing, eyeY, 14 + eyePulse * 0.4, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
 
-// ═══════════════════════════════════════════════════════════════
-//  GRID
-// ═══════════════════════════════════════════════════════════════
-function renderGrid() {
-  const q  = searchQuery.trim().toLowerCase();
-  let vis  = 0;
-  grid.innerHTML = '';
+            // O'ng ko'z (Neon Qizil/Siyohrang)
+            ctx.save();
+            ctx.shadowBlur = 10 + volume * 0.2;
+            ctx.shadowColor = '#ff007f';
+            ctx.fillStyle = '#ff007f';
+            ctx.beginPath();
+            ctx.arc(fx + eyeSpacing, eyeY, 6 + eyePulse * 0.2, 0, Math.PI * 2);
+            ctx.fill();
+            // O'ng ko'z kiber halqasi
+            ctx.strokeStyle = 'rgba(255, 0, 127, 0.6)';
+            ctx.beginPath();
+            ctx.arc(fx + eyeSpacing, eyeY, 14 + eyePulse * 0.4, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
 
-  for (let n = 1; n <= TOTAL; n++) {
-    const data     = LESSONS[n] || null;
-    const hasAudio = !!(data && data.url);
-    const isMarked = markedSet.has(n);
-    const isCur    = n === currentLesson;
+            // Qosh chiziqlari (Kiberpank burchakli dizayn)
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            // Chap qosh
+            ctx.moveTo(fx - 50, eyeY - 15 - eyePulse * 0.3);
+            ctx.lineTo(fx - 20, eyeY - 10 - eyePulse * 0.1);
+            // O'ng qosh
+            ctx.moveTo(fx + 50, eyeY - 15 - eyePulse * 0.3);
+            ctx.lineTo(fx + 20, eyeY - 10 - eyePulse * 0.1);
+            ctx.stroke();
 
-    if (filterMode === 'audio'  && !hasAudio) continue;
-    if (filterMode === 'marked' && !isMarked) continue;
-    if (q) {
-      const ts = data && data.t ? data.t.toLowerCase() : '';
-      if (!n.toString().includes(q) && !ts.includes(q)) continue;
-    }
 
-    vis++;
-    const btn = document.createElement('button');
-    btn.className = 'lbtn' +
-      (isCur    ? ' cur'    : '') +
-      (isMarked ? ' marked' : '') +
-      (!hasAudio? ' no-aud' : '');
-    btn.setAttribute('data-n', n);
-    btn.title = data && data.t
-      ? `${n}: ${data.t}`
-      : `Dars ${n}${hasAudio ? '' : ' (audio yo\'q)'}`;
-    btn.innerHTML = `<span>${n}</span><span class="mdot"></span>`;
+            // 4. BURUN TIZIMI
+            ctx.strokeStyle = 'rgba(0, 242, 254, 0.4)';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(fx, eyeY + 10);
+            ctx.lineTo(fx - 5, fy + 15);
+            ctx.lineTo(fx + 5, fy + 15);
+            ctx.closePath();
+            ctx.stroke();
 
-    // Bosish: qisqa = ijro, uzoq = belgilash
-    let pt = null;
-    const sP = () => { pt = setTimeout(() => { toggleMark(n, btn); pt = null; }, 500); };
-    const eP = () => { if (pt) { clearTimeout(pt); pt = null; if (hasAudio) playLesson(n); } };
-    const cP = () => { if (pt) { clearTimeout(pt); pt = null; } };
 
-    btn.addEventListener('mousedown', sP);
-    btn.addEventListener('mouseup',   eP);
-    btn.addEventListener('mouseleave',cP);
-    btn.addEventListener('touchstart', e => { e.preventDefault(); sP(); }, {passive: false});
-    btn.addEventListener('touchend',   eP);
-    btn.addEventListener('touchcancel',cP);
+            // 5. DINAMIK OG'IZ (Haqiqiy Audio Bass chastotasiga qarab ochiladi)
+            const mouthY = fy + 45;
+            // Ovoz past bo'lganda mayin tabassum, baland bo'lganda dinamik ochiladigan to'lqin
+            const mouthOpen = lowFreq * 45; 
+            const mouthWidth = 40 + lowFreq * 15;
 
-    grid.appendChild(btn);
-  }
+            ctx.save();
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = '#ff007f';
+            ctx.strokeStyle = '#ff007f';
+            ctx.fillStyle = 'rgba(121, 40, 202, 0.2)';
+            ctx.lineWidth = 3;
 
-  visEl.textContent    = vis;
-  totalEl.textContent  = Object.keys(LESSONS).length;
-  markedEl.textContent = markedSet.size;
-}
+            ctx.beginPath();
+            if (mouthOpen > 5) {
+                // Audio ijro etilayotganda gapirayotgan og'iz (ellipsimon kiber-shakl)
+                ctx.ellipse(fx, mouthY, mouthWidth / 2, mouthOpen / 2, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
 
-function toggleMark(n, btn) {
-  if (markedSet.has(n)) {
-    markedSet.delete(n);
-    btn.classList.remove('marked');
-    toast(`Dars ${n} belgisi olib tashlandi`);
-  } else {
-    markedSet.add(n);
-    btn.classList.add('marked');
-    toast(`Dars ${n} qizil belgilandi 🔴`);
-  }
-  localStorage.setItem(MARK_KEY, JSON.stringify([...markedSet]));
-  markedEl.textContent = markedSet.size;
-}
+                // Ichki energetik chiziqlar (tishlar o'rniga kiber-energiya)
+                ctx.strokeStyle = '#00f2fe';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(fx - mouthWidth / 2 + 5, mouthY);
+                ctx.lineTo(fx + mouthWidth / 2 - 5, mouthY);
+                ctx.stroke();
+            } else {
+                // Audio to'xtaganda yopiq kiber-tabassum chizig'i
+                ctx.beginPath();
+                ctx.moveTo(fx - 25, mouthY);
+                ctx.quadraticCurveTo(fx, mouthY + 5, fx + 25, mouthY);
+                ctx.stroke();
+            }
+            ctx.restore();
 
-// ═══════════════════════════════════════════════════════════════
-//  SEARCH & FILTER
-// ═══════════════════════════════════════════════════════════════
-searchInp.addEventListener('input', () => { searchQuery = searchInp.value; renderGrid(); });
 
-document.querySelectorAll('.tab').forEach(b => {
-  b.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(x => x.classList.remove('on','on-red'));
-    filterMode = b.dataset.f;
-    if (filterMode === 'marked') b.classList.add('on-red');
-    else b.classList.add('on');
-    renderGrid();
-  });
-});
+            // 6. ADRESLI MA'LUMOT VA SIGNAL TO'LQINLARI (Yuz chetida)
+            ctx.fillStyle = 'rgba(0, 242, 254, 0.5)';
+            ctx.font = '9px monospace';
+            ctx.fillText("AI_STATUS: ACTIVE", fx - 130, fy + 120);
+            ctx.fillText("FREQ_MOD: " + Math.round(volume * 10), fx + 60, fy + 120);
+        }
 
-// ═══════════════════════════════════════════════════════════════
-//  TOAST
-// ═══════════════════════════════════════════════════════════════
-function toast(msg, err = false) {
-  const t = document.createElement('div');
-  t.className = 'toast' + (err ? ' err' : '');
-  t.textContent = msg;
-  document.getElementById('toastC').appendChild(t);
-  setTimeout(() => t.remove(), 3000);
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  INIT
-// ═══════════════════════════════════════════════════════════════
-renderGrid();
-toast('💡 Dars tugmasini bosing → audio boshlanadi');
-</script>
+        // Animatsiyani boshlash
+        drawFace();
+    </script>
 </body>
 </html>
