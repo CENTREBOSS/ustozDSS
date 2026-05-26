@@ -393,29 +393,51 @@ main{
 //  Ko'proq qo'shish uchun quyidagi LESSONS obyektiga yozing.
 // ═══════════════════════════════════════════════════════════════
 const LESSONS = {
-  1:  { url: "https://www.dropbox.com/scl/fi/l4t5esnzx5fftw8vb96tw/1.mp3?rlkey=mh4ohwg1qnhipjhwu6bol9wcv&st=druxub8j&dl=1",  t: "Kirish: Kiberxavfsizlik nima?" },
-  2:  { url: "https://www.dropbox.com/s/EXAMPLE2/dars2.mp3?dl=0",  t: "Tarmoq asoslari (OSI modeli)" },
-  3:  { url: "https://www.dropbox.com/s/EXAMPLE3/dars3.mp3?dl=0",  t: "IP, TCP, UDP protokollari" },
-  4:  { url: "https://www.dropbox.com/s/EXAMPLE4/dars4.mp3?dl=0",  t: "Linux buyruqlar qatori" },
-  5:  { url: "https://www.dropbox.com/s/EXAMPLE5/dars5.mp3?dl=0",  t: "Kali Linux o'rnatish" },
-  6:  { url: "https://www.dropbox.com/s/EXAMPLE6/dars6.mp3?dl=0",  t: "Nmap bilan port skanerlash" },
-  7:  { url: "https://www.dropbox.com/s/EXAMPLE7/dars7.mp3?dl=0",  t: "Metasploit Framework" },
-  8:  { url: "https://www.dropbox.com/s/EXAMPLE8/dars8.mp3?dl=0",  t: "SQL Injection asoslari" },
-  9:  { url: "https://www.dropbox.com/s/EXAMPLE9/dars9.mp3?dl=0",  t: "XSS hujumlari" },
-  10: { url: "https://www.dropbox.com/s/EXAMPLE10/dars10.mp3?dl=0",t: "CSRF va himoya usullari" },
-  // ... shu tartibda 1000 gacha qo'shing
+  // ─── Google Drive FILE_ID ni shu yerga yozing ───────────────────────────
+  // Drive-da faylni oching → Share → "Anyone with the link" → linkdan
+  // https://drive.google.com/file/d/  FILE_ID  /view?usp=sharing
+  // faqat FILE_ID qismini ko'chiring (1ABC...xyz ko'rinishida)
+  //
+  1:  { url: "https://drive.google.com/file/d/1SvevHbIsbKUY1cy4BVGWmk77U2EhOHcZ/view?usp=drivesdk",  t: "Kirish: Kiberxavfsizlik nima?" },
+  2:  { url: "1xKjEXAMPLE_FILE_ID_2_xxxxxxxxxxxxxxxxx",  t: "Tarmoq asoslari (OSI modeli)" },
+  3:  { url: "1xKjEXAMPLE_FILE_ID_3_xxxxxxxxxxxxxxxxx",  t: "IP, TCP, UDP protokollari" },
+  4:  { url: "1xKjEXAMPLE_FILE_ID_4_xxxxxxxxxxxxxxxxx",  t: "Linux buyruqlar qatori" },
+  5:  { url: "1xKjEXAMPLE_FILE_ID_5_xxxxxxxxxxxxxxxxx",  t: "Kali Linux o'rnatish" },
+  6:  { url: "1xKjEXAMPLE_FILE_ID_6_xxxxxxxxxxxxxxxxx",  t: "Nmap bilan port skanerlash" },
+  7:  { url: "1xKjEXAMPLE_FILE_ID_7_xxxxxxxxxxxxxxxxx",  t: "Metasploit Framework" },
+  8:  { url: "1xKjEXAMPLE_FILE_ID_8_xxxxxxxxxxxxxxxxx",  t: "SQL Injection asoslari" },
+  9:  { url: "1xKjEXAMPLE_FILE_ID_9_xxxxxxxxxxxxxxxxx",  t: "XSS hujumlari" },
+  10: { url: "1xKjEXAMPLE_FILE_ID_10_xxxxxxxxxxxxxxxxx", t: "CSRF va himoya usullari" },
+  // ... 1000 gacha shu tartibda davom eting
 };
 
 // ═══════════════════════════════════════════════════════════════
-//  YORDAMCHI: Dropbox URL → to'g'ridan-to'g'ri yuklovchi URL
+//  YORDAMCHI: Dropbox URL — dl=1 bo'lsa xuddi shundayligicha
 // ═══════════════════════════════════════════════════════════════
-function toDirectUrl(url) {
-  if (!url) return '';
-  return url
-    .replace('www.dropbox.com', 'dl.dropboxusercontent.com')
-    .replace(/[?&]dl=0/, '?dl=1')
-    .replace(/[?&]dl=1/, '?dl=1')
-    + (url.includes('?') ? '' : '?dl=1');
+function toDirectUrl(raw) {
+  if (!raw) return '';
+  const url = raw.trim();
+
+  // To'liq Google Drive share/view linki
+  // https://drive.google.com/file/d/FILE_ID/view...
+  const m1 = url.match(/\/file\/d\/([A-Za-z0-9_-]+)/);
+  if (m1) return 'https://drive.google.com/uc?export=download&id=' + m1[1];
+
+  // https://drive.google.com/open?id=FILE_ID
+  const m2 = url.match(/[?&]id=([A-Za-z0-9_-]+)/);
+  if (m2 && url.includes('drive.google.com'))
+    return 'https://drive.google.com/uc?export=download&id=' + m2[1];
+
+  // Faqat FILE_ID — harf/raqam/_/- dan iborat, 25+ belgi
+  if (/^[A-Za-z0-9_-]{25,}$/.test(url))
+    return 'https://drive.google.com/uc?export=download&id=' + url;
+
+  // Dropbox — dl=1 bo'lsa o'zgartirilmaydi
+  if (url.includes('dropbox.com'))
+    return url.includes('dl=1') ? url : url.replace('dl=0', 'dl=1');
+
+  // Boshqa to'g'ridan-to'g'ri URL
+  return url;
 }
 
 // ═══════════════════════════════════════════════════════════════
