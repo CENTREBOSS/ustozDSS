@@ -1,1463 +1,483 @@
-<!DOCTYPE html>
-<html lang="uz">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CyberAcademy — Xavfsizlik Maktabi</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+<!doctype html>
+<html lang="uz" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Speaking Robot</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&amp;display=swap" rel="stylesheet">
   <style>
-/* =============================================
-   CYBER//ACADEMY — STYLESHEET
-   Renkler: Siyohrang, Qizil, Ko'k
-   ============================================= */
+        html, body { height: 100%; margin: 0; }
+        body { font-family: 'Orbitron', sans-serif; }
 
-:root {
-  --ink: #0a0f2e;
-  --ink-deep: #04061a;
-  --ink-mid: #111a3e;
-  --ink-light: #1a2555;
-  --red: #ff1a3c;
-  --red-dim: #cc0022;
-  --red-glow: rgba(255, 26, 60, 0.4);
-  --blue: #00aaff;
-  --blue-bright: #00e5ff;
-  --blue-dim: #0066cc;
-  --blue-glow: rgba(0, 170, 255, 0.35);
-  --text-main: #c8e6ff;
-  --text-dim: #6688aa;
-  --text-bright: #ffffff;
-  --border: rgba(0, 170, 255, 0.2);
-  --border-bright: rgba(0, 170, 255, 0.5);
-  --gold: #ffd700;
-  --green: #00ff88;
-  --purple: #8800ff;
-}
+        .robot-container {
+            position: relative;
+            width: 200px;
+            height: 280px;
+            margin: 0 auto;
+        }
 
-/* ---- RESET ---- */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+        .robot-head {
+            width: 120px;
+            height: 100px;
+            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+            border-radius: 20px;
+            margin: 0 auto;
+            position: relative;
+            border: 3px solid #00ff00;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
 
-body {
-  background: var(--ink-deep);
-  color: var(--text-main);
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 15px;
-  min-height: 100vh;
-  overflow-x: hidden;
-  position: relative;
-}
+        .robot-eye {
+            width: 24px;
+            height: 24px;
+            background: #0f5;
+            border-radius: 50%;
+            position: absolute;
+            top: 30px;
+            box-shadow: 0 0 10px #0f5;
+            transition: all 0.1s;
+        }
 
-/* ---- MATRIX CANVAS ---- */
-#matrix-canvas {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  z-index: 0;
-  opacity: 0.12;
-  pointer-events: none;
-}
+        .robot-eye.left { left: 25px; }
+        .robot-eye.right { right: 25px; }
 
-/* ---- SCANLINES ---- */
-.scanlines {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  z-index: 1;
-  pointer-events: none;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0, 170, 255, 0.03) 2px,
-    rgba(0, 170, 255, 0.03) 4px
-  );
-  animation: scanMove 8s linear infinite;
-}
-@keyframes scanMove {
-  0% { background-position: 0 0; }
-  100% { background-position: 0 100px; }
-}
+        .robot-eye.blink {
+            height: 4px;
+            top: 40px;
+        }
 
-/* ---- HEADER ---- */
-.site-header {
-  position: relative;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 28px;
-  background: linear-gradient(90deg, rgba(4,6,26,0.98), rgba(10,15,46,0.95));
-  border-bottom: 1px solid var(--border-bright);
-  box-shadow: 0 0 30px rgba(0, 170, 255, 0.15), 0 2px 0 var(--red);
-  flex-wrap: wrap;
-  gap: 12px;
-}
+        .robot-mouth {
+            width: 40px;
+            height: 12px;
+            background: #ff0000;
+            border-radius: 6px;
+            position: absolute;
+            bottom: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: all 0.1s;
+            box-shadow: 0 0 8px rgba(255, 0, 0, 0.5);
+        }
 
-.header-left { display: flex; flex-direction: column; }
+        .robot-mouth.speaking {
+            height: 20px;
+            border-radius: 10px;
+        }
 
-.logo-glitch {
-  font-family: 'Orbitron', monospace;
-  font-size: 1.8rem;
-  font-weight: 900;
-  color: var(--blue-bright);
-  text-shadow: 0 0 10px var(--blue), 0 0 30px rgba(0,229,255,0.5);
-  letter-spacing: 3px;
-  position: relative;
-  cursor: default;
-  animation: logoGlitch 6s infinite;
-}
-.logo-glitch::before,
-.logo-glitch::after {
-  content: attr(data-text);
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%;
-}
-.logo-glitch::before {
-  color: var(--red);
-  clip-path: polygon(0 0, 100% 0, 100% 40%, 0 40%);
-  animation: glitchTop 5s infinite step-end;
-  opacity: 0;
-}
-.logo-glitch::after {
-  color: var(--blue);
-  clip-path: polygon(0 60%, 100% 60%, 100% 100%, 0 100%);
-  animation: glitchBot 5s infinite step-end;
-  opacity: 0;
-}
-@keyframes glitchTop {
-  0%,94%,100% { opacity: 0; transform: translateX(0); }
-  95% { opacity: 0.8; transform: translateX(-4px); }
-  97% { opacity: 0.8; transform: translateX(4px); }
-}
-@keyframes glitchBot {
-  0%,91%,100% { opacity: 0; transform: translateX(0); }
-  92% { opacity: 0.7; transform: translateX(4px); }
-  94% { opacity: 0.7; transform: translateX(-4px); }
-}
-@keyframes logoGlitch {
-  0%,90%,100% { text-shadow: 0 0 10px var(--blue), 0 0 30px rgba(0,229,255,0.5); }
-  92% { text-shadow: -3px 0 var(--red), 3px 0 var(--blue-bright); }
-  94% { text-shadow: 3px 0 var(--red), -3px 0 var(--blue-bright); }
-  96% { text-shadow: 0 0 10px var(--blue), 0 0 30px rgba(0,229,255,0.5); }
-}
+        .robot-body {
+            width: 100px;
+            height: 120px;
+            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+            border-radius: 15px;
+            margin: 10px auto 0;
+            border: 3px solid #0f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
 
-.tagline {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.72rem;
-  color: var(--text-dim);
-  letter-spacing: 2px;
-  margin-top: 2px;
-}
+        .robot-screen {
+            width: 60px;
+            height: 60px;
+            background: #000;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  flex-wrap: wrap;
-}
+        .robot-screen .wave-bars {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            height: 30px;
+        }
 
-/* ---- SEARCH ---- */
-.search-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  background: rgba(0,20,60,0.8);
-  border: 1px solid var(--border-bright);
-  border-radius: 4px;
-  overflow: hidden;
-  box-shadow: 0 0 12px var(--blue-glow);
-}
-#search-input {
-  background: transparent;
-  border: none;
-  outline: none;
-  color: var(--text-bright);
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.85rem;
-  padding: 8px 14px;
-  width: 240px;
-  letter-spacing: 1px;
-}
-#search-input::placeholder { color: var(--text-dim); }
-.search-btn {
-  background: var(--blue-dim);
-  border: none;
-  color: white;
-  font-size: 1.1rem;
-  padding: 8px 14px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.search-btn:hover { background: var(--blue); }
+        .wave-bar {
+            width: 4px;
+            background: #0f5;
+            border-radius: 2px;
+            height: 8px;
+            transition: height 0.05s;
+        }
 
-.stats-bar {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.78rem;
-  color: var(--blue-bright);
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-.sep { color: var(--text-dim); }
+        .robot-arm {
+            position: absolute;
+            width: 20px;
+            height: 80px;
+            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+            border-radius: 10px;
+            top: 120px;
+            border: 2px solid #0f5;
+        }
 
-/* ---- COLOR LEGEND ---- */
-.color-legend {
-  position: relative; z-index: 10;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  padding: 8px 28px;
-  background: rgba(4,6,26,0.9);
-  border-bottom: 1px solid var(--border);
-  font-size: 0.78rem;
-  flex-wrap: wrap;
-}
-.legend-item { display: flex; align-items: center; gap: 6px; color: var(--text-dim); }
-.dot {
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  display: inline-block;
-}
-.dot-default { background: var(--ink-light); border: 1px solid var(--border-bright); }
-.dot-learned { background: var(--blue); box-shadow: 0 0 6px var(--blue); }
-.dot-important { background: var(--red); box-shadow: 0 0 6px var(--red); }
-.tip {
-  margin-left: auto;
-  color: var(--gold);
-  font-size: 0.72rem;
-  opacity: 0.7;
-  font-family: 'Share Tech Mono', monospace;
-}
+        .robot-arm.left { left: 15px; transform: rotate(5deg); }
+        .robot-arm.right { right: 15px; transform: rotate(-5deg); }
 
-/* ---- MAIN LAYOUT ---- */
-.main-layout {
-  position: relative; z-index: 5;
-  display: grid;
-  grid-template-columns: 1fr 320px;
-  gap: 0;
-  min-height: calc(100vh - 130px);
-}
+        .speech-bubble {
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1a1a;
+            color: #0f5;
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-family: sans-serif;
+            white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(0,255,0,0.2);
+            border: 2px solid #0f5;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
 
-/* ---- LESSON PANEL ---- */
-.lesson-panel {
-  padding: 20px;
-  border-right: 1px solid var(--border);
-  overflow-y: auto;
-  max-height: calc(100vh - 130px);
-}
-.lesson-panel::-webkit-scrollbar { width: 4px; }
-.lesson-panel::-webkit-scrollbar-thumb { background: var(--blue-dim); border-radius: 2px; }
+        .speech-bubble.visible { opacity: 1; }
 
-.panel-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-.panel-header h2 {
-  font-family: 'Orbitron', monospace;
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--blue-bright);
-  letter-spacing: 3px;
-  text-shadow: 0 0 8px var(--blue-glow);
-}
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid #0f5;
+        }
 
-.blink-cursor {
-  animation: blink 1s step-end infinite;
-  color: var(--red);
-}
-@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
 
-/* ---- FILTER TABS ---- */
-.filter-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
-.tab {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text-dim);
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.72rem;
-  padding: 4px 12px;
-  border-radius: 2px;
-  cursor: pointer;
-  letter-spacing: 1px;
-  transition: all 0.2s;
-}
-.tab:hover { border-color: var(--blue); color: var(--blue); }
-.tab.active {
-  background: var(--blue-dim);
-  border-color: var(--blue);
-  color: var(--text-bright);
-  box-shadow: 0 0 8px var(--blue-glow);
-}
+        .robot-container { animation: float 3s ease-in-out infinite; }
 
-/* ---- LESSON GRID ---- */
-.lesson-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
-  gap: 6px;
-}
+        .btn-speak {
+            background: linear-gradient(135deg, #0066cc, #0052a3);
+            border: none;
+            color: white;
+            padding: 14px 32px;
+            border-radius: 12px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(0, 102, 204, 0.4);
+            border: 2px solid #0066cc;
+        }
 
-.lesson-btn {
-  aspect-ratio: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: var(--ink-mid);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  cursor: pointer;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.7rem;
-  color: var(--text-dim);
-  transition: all 0.18s;
-  position: relative;
-  overflow: hidden;
-  user-select: none;
-  -webkit-user-select: none;
-  padding: 4px;
-  text-align: center;
-}
-.lesson-btn::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: linear-gradient(135deg, rgba(0,170,255,0.05), transparent);
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-.lesson-btn:hover { border-color: var(--blue-bright); color: var(--blue-bright); transform: scale(1.05); box-shadow: 0 0 12px var(--blue-glow); }
-.lesson-btn:hover::before { opacity: 1; }
-.lesson-btn.active-playing { border-color: var(--red); color: var(--red); box-shadow: 0 0 16px var(--red-glow); animation: activePlay 1s ease infinite; }
-@keyframes activePlay { 0%,100% { box-shadow: 0 0 16px var(--red-glow); } 50% { box-shadow: 0 0 28px var(--red-glow), 0 0 4px var(--red); } }
+        .btn-speak:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(0, 102, 204, 0.6); }
+        .btn-speak:active { transform: scale(0.98); }
+        .btn-speak:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-.lesson-btn .ln { font-size: 0.9rem; font-weight: bold; color: var(--blue-bright); }
-.lesson-btn .lt { font-size: 0.6rem; line-height: 1.2; overflow: hidden; max-height: 28px; word-break: break-word; }
+        .input-text {
+            background: #0a0a0a;
+            border: 2px solid #0f5;
+            color: #0f5;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-family: sans-serif;
+            font-size: 16px;
+            width: 100%;
+            max-width: 400px;
+            transition: border-color 0.2s;
+        }
 
-/* Color states */
-.lesson-btn.state-important { background: rgba(200,0,30,0.12); border-color: var(--red); color: var(--red); }
-.lesson-btn.state-important .ln { color: var(--red); }
-.lesson-btn.state-learned { background: rgba(0,100,200,0.15); border-color: var(--blue); color: var(--blue-bright); }
-.lesson-btn.state-learned .ln { color: var(--blue-bright); }
-.lesson-btn.state-done { background: rgba(0,200,100,0.12); border-color: var(--green); color: var(--green); }
-.lesson-btn.state-done .ln { color: var(--green); }
-.lesson-btn.state-review { background: rgba(255,200,0,0.1); border-color: var(--gold); color: var(--gold); }
-.lesson-btn.state-review .ln { color: var(--gold); }
+        .input-text:focus { outline: none; border-color: #00ff00; box-shadow: 0 0 10px rgba(0,255,0,0.3); }
+        .input-text::placeholder { color: #0f5; opacity: 0.6; }
 
-/* ---- HOLOGRAM PANEL ---- */
-.hologram-panel {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px 10px;
-  border-right: 1px solid var(--border);
-  background: radial-gradient(ellipse at center, rgba(0,50,120,0.08) 0%, transparent 70%);
-  position: sticky;
-  top: 0;
-  max-height: calc(100vh - 130px);
-  overflow: hidden;
-}
+        .lesson-btn {
+            background: #0f5;
+            color: #000;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.2s;
+            width: 100%;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-.holo-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-  width: 100%;
-}
-
-/* RINGS */
-.holo-rings {
-  position: relative;
-  width: 280px;
-  height: 280px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.ring {
-  position: absolute;
-  border-radius: 50%;
-  border: 1px solid;
-  animation: ringRotate linear infinite;
-}
-.ring-1 {
-  width: 270px; height: 270px;
-  border-color: rgba(0,170,255,0.25);
-  animation-duration: 12s;
-}
-.ring-2 {
-  width: 230px; height: 230px;
-  border-color: rgba(255,26,60,0.2);
-  animation-duration: 8s;
-  animation-direction: reverse;
-}
-.ring-3 {
-  width: 190px; height: 190px;
-  border-color: rgba(0,229,255,0.15);
-  animation-duration: 6s;
-}
-@keyframes ringRotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-.ring-1::before, .ring-2::before, .ring-3::before {
-  content: '';
-  position: absolute;
-  top: -3px; left: 50%;
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--blue-bright);
-  box-shadow: 0 0 8px var(--blue);
-}
-
-/* FACE WRAPPER */
-.face-wrapper {
-  position: absolute;
-  width: 220px;
-  height: 240px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: faceFloat 4s ease-in-out infinite;
-}
-@keyframes faceFloat {
-  0%,100% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
-}
-
-#ai-face {
-  width: 100%;
-  height: 100%;
-  filter: drop-shadow(0 0 20px rgba(0,170,255,0.5)) drop-shadow(0 0 40px rgba(0,100,255,0.2));
-}
-
-/* HOLOGRAM SCAN */
-.holo-scan {
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, rgba(0,229,255,0.8), transparent);
-  animation: scanDown 3s ease-in-out infinite;
-  box-shadow: 0 0 10px rgba(0,229,255,0.6);
-  pointer-events: none;
-}
-@keyframes scanDown {
-  0% { top: 0; opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { top: 100%; opacity: 0; }
-}
-
-/* AUDIO PLAYER */
-.audio-player {
-  width: 100%;
-  background: rgba(4,6,26,0.9);
-  border: 1px solid var(--border-bright);
-  border-radius: 6px;
-  padding: 12px;
-  box-shadow: 0 0 20px var(--blue-glow);
-}
-.now-playing {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.72rem;
-  color: var(--blue-bright);
-  text-align: center;
-  margin-bottom: 8px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  text-shadow: 0 0 6px var(--blue-glow);
-  letter-spacing: 1px;
-}
-#main-audio {
-  width: 100%;
-  height: 30px;
-  margin-bottom: 8px;
-  filter: hue-rotate(180deg) brightness(1.2);
-}
-/* Override audio chrome */
-#main-audio::-webkit-media-controls-panel { background: rgba(0,30,80,0.9); }
-
-/* AUDIO VISUALIZER */
-.audio-viz {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 4px;
-  height: 32px;
-}
-.bar {
-  width: 8px;
-  background: linear-gradient(to top, var(--red), var(--blue));
-  border-radius: 2px 2px 0 0;
-  height: 4px;
-  transition: height 0.08s;
-  box-shadow: 0 0 4px var(--blue-glow);
-}
-.audio-viz.playing .bar { animation: barDance 0.5s ease infinite alternate; }
-.bar:nth-child(1) { animation-delay: 0s; }
-.bar:nth-child(2) { animation-delay: 0.05s; }
-.bar:nth-child(3) { animation-delay: 0.1s; }
-.bar:nth-child(4) { animation-delay: 0.15s; }
-.bar:nth-child(5) { animation-delay: 0.2s; }
-.bar:nth-child(6) { animation-delay: 0.08s; }
-.bar:nth-child(7) { animation-delay: 0.13s; }
-.bar:nth-child(8) { animation-delay: 0.18s; }
-.bar:nth-child(9) { animation-delay: 0.03s; }
-.bar:nth-child(10) { animation-delay: 0.22s; }
-.bar:nth-child(11) { animation-delay: 0.07s; }
-.bar:nth-child(12) { animation-delay: 0.17s; }
-@keyframes barDance {
-  0% { height: 4px; }
-  100% { height: 28px; }
-}
-
-/* HOLO STATUS */
-.holo-status {
-  width: 100%;
-  background: rgba(4,6,26,0.7);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 8px 12px;
-}
-.status-line {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.68rem;
-  padding: 3px 0;
-  border-bottom: 1px solid rgba(0,100,200,0.1);
-}
-.status-line:last-child { border-bottom: none; }
-.sl-label { color: var(--text-dim); letter-spacing: 1px; }
-.sl-val { color: var(--green); text-shadow: 0 0 5px rgba(0,255,100,0.5); }
-
-/* ---- ADMIN PANEL ---- */
-.admin-panel {
-  padding: 20px 16px;
-  background: rgba(4,6,26,0.5);
-  overflow-y: auto;
-  max-height: calc(100vh - 130px);
-}
-.admin-panel::-webkit-scrollbar { width: 3px; }
-.admin-panel::-webkit-scrollbar-thumb { background: var(--red-dim); }
-
-.toggle-admin {
-  background: none;
-  border: 1px solid var(--border);
-  color: var(--text-dim);
-  cursor: pointer;
-  padding: 2px 8px;
-  border-radius: 2px;
-  transition: all 0.2s;
-}
-.toggle-admin:hover { border-color: var(--blue); color: var(--blue); }
-
-.admin-form {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 20px;
-}
-.admin-form label {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.68rem;
-  color: var(--text-dim);
-  letter-spacing: 1px;
-  margin-bottom: -4px;
-}
-.admin-form input,
-.admin-form select {
-  background: rgba(0,20,60,0.8);
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  color: var(--text-main);
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.8rem;
-  padding: 7px 10px;
-  outline: none;
-  transition: border-color 0.2s;
-}
-.admin-form input:focus,
-.admin-form select:focus { border-color: var(--blue-bright); box-shadow: 0 0 8px var(--blue-glow); }
-.admin-form select option { background: var(--ink-deep); }
-
-.add-btn, .export-btn, .import-btn {
-  border: none;
-  border-radius: 3px;
-  padding: 10px;
-  font-family: 'Orbitron', monospace;
-  font-size: 0.72rem;
-  font-weight: 700;
-  cursor: pointer;
-  letter-spacing: 1px;
-  transition: all 0.2s;
-}
-.add-btn {
-  background: linear-gradient(90deg, var(--red-dim), #880022);
-  color: white;
-  box-shadow: 0 0 12px var(--red-glow);
-}
-.add-btn:hover { background: linear-gradient(90deg, var(--red), var(--red-dim)); box-shadow: 0 0 20px var(--red-glow); transform: translateY(-1px); }
-.export-btn {
-  background: linear-gradient(90deg, var(--blue-dim), #004499);
-  color: white;
-  box-shadow: 0 0 10px var(--blue-glow);
-  font-size: 0.62rem;
-}
-.export-btn:hover { transform: translateY(-1px); box-shadow: 0 0 18px var(--blue-glow); }
-.import-btn {
-  background: rgba(0,100,200,0.2);
-  border: 1px solid var(--border);
-  color: var(--text-dim);
-  font-size: 0.62rem;
-}
-.import-btn:hover { border-color: var(--blue); color: var(--blue); }
-
-/* ADMIN LIST */
-.admin-list h3 {
-  font-family: 'Orbitron', monospace;
-  font-size: 0.72rem;
-  color: var(--blue-bright);
-  letter-spacing: 2px;
-  margin-bottom: 10px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid var(--border);
-}
-.admin-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 0;
-  border-bottom: 1px solid rgba(0,100,200,0.08);
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.68rem;
-}
-.admin-item .ai-num {
-  color: var(--blue-bright);
-  min-width: 28px;
-  font-weight: bold;
-}
-.admin-item .ai-title {
-  color: var(--text-dim);
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.admin-item .ai-del {
-  background: none;
-  border: 1px solid rgba(200,0,30,0.3);
-  color: var(--red);
-  cursor: pointer;
-  padding: 2px 6px;
-  border-radius: 2px;
-  font-size: 0.65rem;
-  transition: all 0.2s;
-}
-.admin-item .ai-del:hover { background: var(--red-dim); color: white; }
-
-/* ---- CONTEXT MENU ---- */
-#ctx-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  z-index: 100;
-  background: transparent;
-}
-.context-menu {
-  position: fixed;
-  z-index: 101;
-  background: var(--ink-deep);
-  border: 1px solid var(--border-bright);
-  border-radius: 6px;
-  padding: 12px;
-  box-shadow: 0 0 30px var(--blue-glow), 0 0 60px rgba(0,0,0,0.8);
-  min-width: 180px;
-  animation: menuPop 0.15s ease;
-}
-@keyframes menuPop {
-  from { transform: scale(0.85); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
-.cm-title {
-  font-family: 'Orbitron', monospace;
-  font-size: 0.65rem;
-  color: var(--text-dim);
-  letter-spacing: 2px;
-  text-align: center;
-  margin-bottom: 10px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--border);
-}
-.cm-btn {
-  display: block;
-  width: 100%;
-  background: none;
-  border: 1px solid var(--border);
-  color: var(--text-main);
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.78rem;
-  padding: 7px 12px;
-  border-radius: 3px;
-  cursor: pointer;
-  text-align: left;
-  margin-bottom: 6px;
-  transition: all 0.18s;
-  letter-spacing: 1px;
-}
-.cm-btn:hover { transform: translateX(4px); }
-.cm-default:hover { border-color: var(--text-dim); color: var(--text-bright); }
-.cm-red:hover { border-color: var(--red); color: var(--red); background: rgba(200,0,30,0.1); }
-.cm-blue:hover { border-color: var(--blue); color: var(--blue); background: rgba(0,100,200,0.1); }
-.cm-green:hover { border-color: var(--green); color: var(--green); background: rgba(0,200,100,0.1); }
-.cm-yellow:hover { border-color: var(--gold); color: var(--gold); background: rgba(255,200,0,0.08); }
-.cm-cancel {
-  display: block;
-  width: 100%;
-  background: none;
-  border: 1px solid rgba(200,0,30,0.3);
-  color: var(--red);
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.72rem;
-  padding: 6px 12px;
-  border-radius: 3px;
-  cursor: pointer;
-  text-align: center;
-  transition: all 0.18s;
-}
-.cm-cancel:hover { background: var(--red-dim); color: white; }
-
-/* ---- FOOTER ---- */
-.site-footer {
-  position: relative; z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 28px;
-  background: rgba(4,6,26,0.98);
-  border-top: 1px solid var(--border);
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.72rem;
-  color: var(--text-dim);
-}
-.footer-text { display: flex; align-items: center; gap: 10px; }
-.glitch-small {
-  color: var(--blue-bright);
-  font-size: 0.78rem;
-  text-shadow: 0 0 6px var(--blue-glow);
-  position: relative;
-}
-
-/* ---- HIDDEN class ---- */
-.lesson-btn.hidden { display: none !important; }
-
-/* ---- CACHE MARK ---- */
-.cache-mark {
-  position: absolute;
-  bottom: 2px; right: 3px;
-  font-size: 0.55rem;
-  line-height: 1;
-  opacity: 0.7;
-}
-
-/* ---- DOWNLOAD PROGRESS BAR ---- */
-#dl-progress {
-  display: none;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 6px;
-  background: rgba(0,10,40,0.9);
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  padding: 5px 8px;
-}
-#dl-bar {
-  flex: 1;
-  height: 5px;
-  background: linear-gradient(90deg, var(--red), var(--blue-bright));
-  border-radius: 3px;
-  width: 0%;
-  transition: width 0.15s ease;
-  box-shadow: 0 0 8px var(--blue-glow);
-}
-#dl-pct {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.68rem;
-  color: var(--blue-bright);
-  min-width: 32px;
-  text-align: right;
-}
-
-/* =====================
-   RESPONSIVE
-   ===================== */
-@media (max-width: 1100px) {
-  .main-layout { grid-template-columns: 1fr 280px; }
-}
-@media (max-width: 720px) {
-  .main-layout { grid-template-columns: 1fr; }
-  .hologram-panel { max-height: none; padding: 20px; border-right: none; border-bottom: 1px solid var(--border); }
-  .lesson-panel { max-height: 60vh; }
-  .holo-rings { width: 220px; height: 220px; }
-  .ring-1 { width: 210px; height: 210px; }
-  .ring-2 { width: 175px; height: 175px; }
-  .ring-3 { width: 145px; height: 145px; }
-}
+        .lesson-btn:hover { background: #00ff00; box-shadow: 0 0 8px rgba(0,255,0,0.5); }
+        .lesson-btn.active { background: #ff0000; color: white; }
   </style>
-</head>
-<body>
-
-  <canvas id="matrix-canvas"></canvas>
-  <div class="scanlines"></div>
-
-  <header class="site-header">
-    <div class="header-left">
-      <div class="logo-glitch" data-text="CYBER//ACADEMY">CYBER//ACADEMY</div>
-      <span class="tagline">Xavfsizlik Ilmi Markazi</span>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full w-full bg-black flex flex-col items-center justify-start overflow-auto">
+  <div class="text-center p-6 w-full">
+   <h1 id="page-title" class="text-3xl font-bold text-red-500 mb-2">🤖 Darslik Robot</h1>
+   <p id="header-text" class="text-blue-400 mb-6 text-sm">Darsliklarni o'qing va robot gapirib beradi</p>
+   <div class="robot-container mb-8">
+    <div class="speech-bubble" id="speech-bubble"></div>
+    <div class="robot-arm left"></div>
+    <div class="robot-arm right"></div>
+    <div class="robot-head">
+     <div class="robot-eye left" id="eye-left"></div>
+     <div class="robot-eye right" id="eye-right"></div>
+     <div class="robot-mouth" id="mouth"></div>
     </div>
-    <div class="header-right">
-      <div class="search-wrapper">
-        <input type="text" id="search-input" placeholder="Dars qidirish..." autocomplete="off"/>
-        <button class="search-btn" onclick="searchLessons()">&#9906;</button>
+    <div class="robot-body">
+     <div class="robot-screen">
+      <div class="wave-bars">
+       <div class="wave-bar" id="bar1"></div>
+       <div class="wave-bar" id="bar2"></div>
+       <div class="wave-bar" id="bar3"></div>
+       <div class="wave-bar" id="bar4"></div>
+       <div class="wave-bar" id="bar5"></div>
       </div>
-      <div class="stats-bar">
-        <span id="total-count">0 dars</span>
-        <span class="sep">|</span>
-        <span id="marked-count">0 o'rganildi</span>
-      </div>
+     </div>
     </div>
-  </header>
-
-  <div class="color-legend">
-    <span class="legend-item"><span class="dot dot-default"></span>Yangi</span>
-    <span class="legend-item"><span class="dot dot-learned"></span>O'rganilgan</span>
-    <span class="legend-item"><span class="dot dot-important"></span>Muhim</span>
-    <span class="tip">💡 Dars tugmasini bosib turing → rangini o'zgartiring</span>
+   </div>
+   <div class="flex flex-col items-center gap-6 w-full px-4">
+    <div class="w-full max-w-600px">
+     <div class="flex gap-2 mb-4"><input type="text" id="search-input" placeholder="Qidiruv..." class="flex-1 input-text" style="max-width:none;"> <button onclick="filterLessons()" class="btn-speak" style="padding:12px 16px;"> <i data-lucide="search" style="width:16px;height:16px;display:inline-block;"></i> </button>
+     </div>
+     <div id="lessons-list" class="grid gap-2" style="max-height:300px;overflow-y:auto;background:#0a0a0a;padding:12px;border-radius:10px;border:2px solid #0f5;"></div>
+    </div>
+    <div class="flex flex-col items-center gap-4"><input type="text" class="input-text" id="text-input" placeholder="Matn kiriting yoki darslik tanlang..." value="Salom, men robotman!">
+     <div class="flex gap-3 flex-wrap justify-center">
+      <button class="btn-speak" id="btn-speak" onclick="speakText()"> <i data-lucide="volume-2" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:6px;"></i> Gapirtirish </button> <button class="btn-speak" id="btn-stop" onclick="stopSpeaking()" style="background:linear-gradient(135deg,#1f2937,#111827);"> <i data-lucide="square" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:6px;"></i> To'xtatish </button>
+     </div>
+    </div>
+   </div>
   </div>
-
-  <main class="main-layout">
-
-    <section class="lesson-panel">
-      <div class="panel-header">
-        <h2>DARSLAR <span class="blink-cursor">_</span></h2>
-        <div class="filter-tabs">
-          <button class="tab active" onclick="filterLessons('all', this)">Barchasi</button>
-          <button class="tab" onclick="filterLessons('learned', this)">O'rganilgan</button>
-          <button class="tab" onclick="filterLessons('important', this)">Muhim</button>
-          <button class="tab" onclick="filterLessons('new', this)">Yangi</button>
-        </div>
-      </div>
-      <div id="lesson-grid" class="lesson-grid"></div>
-    </section>
-
-    <section class="hologram-panel">
-      <div class="holo-container">
-        <div class="holo-rings">
-          <div class="ring ring-1"></div>
-          <div class="ring ring-2"></div>
-          <div class="ring ring-3"></div>
-        </div>
-
-        <div class="face-wrapper" id="face-wrapper">
-          <svg id="ai-face" viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <radialGradient id="faceGrad" cx="50%" cy="45%" r="55%">
-                <stop offset="0%" stop-color="#00e5ff" stop-opacity="0.9"/>
-                <stop offset="60%" stop-color="#0066cc" stop-opacity="0.6"/>
-                <stop offset="100%" stop-color="#001133" stop-opacity="0.3"/>
-              </radialGradient>
-              <radialGradient id="eyeGrad" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stop-color="#ffffff"/>
-                <stop offset="40%" stop-color="#00e5ff"/>
-                <stop offset="100%" stop-color="#003366"/>
-              </radialGradient>
-              <filter id="glow">
-                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
-              </filter>
-              <filter id="strongGlow">
-                <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
-                <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
-              </filter>
-            </defs>
-            <rect x="85" y="185" width="30" height="30" rx="5" fill="url(#faceGrad)" filter="url(#glow)" opacity="0.7"/>
-            <ellipse cx="100" cy="100" rx="75" ry="90" fill="url(#faceGrad)" filter="url(#glow)"/>
-            <line x1="25" y1="100" x2="175" y2="100" stroke="#00e5ff" stroke-width="0.3" opacity="0.3"/>
-            <line x1="25" y1="80" x2="175" y2="80" stroke="#00e5ff" stroke-width="0.2" opacity="0.2"/>
-            <line x1="25" y1="120" x2="175" y2="120" stroke="#00e5ff" stroke-width="0.2" opacity="0.2"/>
-            <line x1="100" y1="10" x2="100" y2="190" stroke="#00e5ff" stroke-width="0.3" opacity="0.2"/>
-            <path d="M55 72 Q75 65 90 70" stroke="#00e5ff" stroke-width="2.5" fill="none" filter="url(#glow)" opacity="0.9"/>
-            <path d="M110 70 Q125 65 145 72" stroke="#00e5ff" stroke-width="2.5" fill="none" filter="url(#glow)" opacity="0.9"/>
-            <g id="left-eye">
-              <ellipse cx="72" cy="92" rx="16" ry="12" fill="#001133" opacity="0.8"/>
-              <ellipse cx="72" cy="92" rx="14" ry="10" fill="url(#eyeGrad)" filter="url(#glow)"/>
-              <circle cx="72" cy="92" r="6" fill="#001133"/>
-              <circle cx="72" cy="92" r="4" fill="#00e5ff" filter="url(#strongGlow)"/>
-              <circle cx="74" cy="90" r="1.5" fill="#ffffff" opacity="0.9"/>
-              <path id="left-eyelid" d="M58 92 Q72 82 86 92" fill="#0a0f2e" stroke="#00e5ff" stroke-width="0.5"/>
-            </g>
-            <g id="right-eye">
-              <ellipse cx="128" cy="92" rx="16" ry="12" fill="#001133" opacity="0.8"/>
-              <ellipse cx="128" cy="92" rx="14" ry="10" fill="url(#eyeGrad)" filter="url(#glow)"/>
-              <circle cx="128" cy="92" r="6" fill="#001133"/>
-              <circle cx="128" cy="92" r="4" fill="#00e5ff" filter="url(#strongGlow)"/>
-              <circle cx="130" cy="90" r="1.5" fill="#ffffff" opacity="0.9"/>
-              <path id="right-eyelid" d="M114 92 Q128 82 142 92" fill="#0a0f2e" stroke="#00e5ff" stroke-width="0.5"/>
-            </g>
-            <path d="M100 105 L93 125 Q100 130 107 125 Z" fill="none" stroke="#00e5ff" stroke-width="1.5" opacity="0.6" filter="url(#glow)"/>
-            <ellipse cx="96" cy="124" rx="5" ry="3" fill="#00aaff" opacity="0.4"/>
-            <ellipse cx="104" cy="124" rx="5" ry="3" fill="#00aaff" opacity="0.4"/>
-            <ellipse cx="45" cy="110" rx="12" ry="8" fill="#ff4488" opacity="0.15" filter="url(#glow)"/>
-            <ellipse cx="155" cy="110" rx="12" ry="8" fill="#ff4488" opacity="0.15" filter="url(#glow)"/>
-            <path d="M60 160 Q100 180 140 160" stroke="#00e5ff" stroke-width="1" fill="none" opacity="0.4"/>
-            <path d="M30 110 Q28 150 60 170 Q100 185 140 170 Q172 150 170 110" stroke="#00e5ff" stroke-width="1" fill="none" opacity="0.3"/>
-            <path d="M70 30 L70 50 L60 60" stroke="#00e5ff" stroke-width="1" fill="none" opacity="0.5" filter="url(#glow)"/>
-            <path d="M130 30 L130 50 L140 60" stroke="#00e5ff" stroke-width="1" fill="none" opacity="0.5" filter="url(#glow)"/>
-            <circle cx="70" cy="30" r="3" fill="#00e5ff" opacity="0.8" filter="url(#strongGlow)"/>
-            <circle cx="130" cy="30" r="3" fill="#00e5ff" opacity="0.8" filter="url(#strongGlow)"/>
-            <g id="mouth-group">
-              <path id="mouth-base" d="M78 148 Q100 155 122 148" stroke="#00e5ff" stroke-width="2" fill="none" filter="url(#glow)" opacity="0.8"/>
-              <path id="mouth-open" d="M82 148 Q100 152 118 148 Q110 162 100 163 Q90 162 82 148 Z" fill="#001a44" stroke="#00e5ff" stroke-width="1.5" filter="url(#glow)" opacity="0"/>
-              <rect id="teeth" x="87" y="150" width="26" height="8" rx="2" fill="#cceeff" opacity="0" filter="url(#glow)"/>
-              <ellipse id="tongue" cx="100" cy="160" rx="8" ry="4" fill="#ff6688" opacity="0"/>
-            </g>
-            <g opacity="0.5" filter="url(#glow)">
-              <line x1="25" y1="85" x2="35" y2="85" stroke="#ff0033" stroke-width="1.5"/>
-              <line x1="25" y1="90" x2="38" y2="90" stroke="#ff0033" stroke-width="1"/>
-              <line x1="25" y1="95" x2="33" y2="95" stroke="#0066ff" stroke-width="1"/>
-              <line x1="165" y1="85" x2="175" y2="85" stroke="#ff0033" stroke-width="1.5"/>
-              <line x1="162" y1="90" x2="175" y2="90" stroke="#ff0033" stroke-width="1"/>
-              <line x1="167" y1="95" x2="175" y2="95" stroke="#0066ff" stroke-width="1"/>
-            </g>
-          </svg>
-          <div class="holo-scan"></div>
-        </div>
-
-        <div class="audio-player" id="audio-player">
-          <div class="now-playing" id="now-playing">Dars tanlanmagan</div>
-          <audio id="main-audio" controls></audio>
-          <div class="audio-viz" id="audio-viz">
-            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-          </div>
-        </div>
-
-        <div class="holo-status">
-          <div class="status-line"><span class="sl-label">HOLOGRAM</span><span class="sl-val" id="status-holo">ONLINE</span></div>
-          <div class="status-line"><span class="sl-label">XAVFSIZLIK</span><span class="sl-val">AES-256</span></div>
-          <div class="status-line"><span class="sl-label">SIGNAL</span><span class="sl-val" id="signal-val">98%</span></div>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <footer class="site-footer">
-    <div class="footer-text">
-      <span class="glitch-small" data-text="CYBER//ACADEMY">CYBER//ACADEMY</span>
-      <span>— Bilim quvvat. Xavfsizlik — kelajak.</span>
-    </div>
-    <div class="footer-stats">
-      <span id="footer-date"></span>
-    </div>
-  </footer>
-
-  <div id="context-menu" class="context-menu" style="display:none">
-    <div class="cm-title">RANG TANLASH</div>
-    <button class="cm-btn cm-default" onclick="setLessonColor('default')">⬜ Standart</button>
-    <button class="cm-btn cm-red" onclick="setLessonColor('important')">🔴 Muhim</button>
-    <button class="cm-btn cm-blue" onclick="setLessonColor('learned')">🔵 O'rganilgan</button>
-    <button class="cm-btn cm-green" onclick="setLessonColor('done')">🟢 Tugallangan</button>
-    <button class="cm-btn cm-yellow" onclick="setLessonColor('review')">🟡 Takrorlash</button>
-    <button class="cm-cancel" onclick="closeContextMenu()">✕ Yopish</button>
-  </div>
-  <div id="ctx-overlay" onclick="closeContextMenu()" style="display:none"></div>
-
   <script>
-/* =============================================
-   CYBER//ACADEMY — script.js
-   ============================================= */
+        // Database
+        const lessons = [
+            { id: 1, number: '01', name: '1', url: 'https://www.dropbox.com/scl/fi/l4t5esnzx5fftw8vb96tw/1.mp3?rlkey=mh4ohwg1qnhipjhwu6bol9wcv&st=druxub8j&dl=1' },
+            { id: 2, number: '02', name: 'Fizika', url: 'https://www.dropbox.com/scl/fi/abc123/fizika.mp3?rlkey=test&dl=1' },
+            { id: 3, number: '03', name: 'Ingliz Tili', url: 'https://www.dropbox.com/scl/fi/xyz789/english.mp3?rlkey=test2&dl=1' },
+            { id: 4, number: '04', name: 'Kimyo', url: 'https://www.dropbox.com/scl/fi/qwe456/kimyo.mp3?rlkey=test3&dl=1' },
+            { id: 5, number: '05', name: 'Biologiya', url: 'https://www.dropbox.com/scl/fi/asd789/bio.mp3?rlkey=test4&dl=1' },
+        ];
 
-/* ====================================================
-   📂 MA'LUMOTLAR BAZASI
-   Yangi dars qo'shish uchun quyidagi ro'yxatga
-   quyidagi formatda qator qo'shing:
+        let currentAudio = null;
+        let isPlaying = false;
+        let audioCtx = null;
 
-   { id: RAQAM, title: "DARS NOMI", url: "DROPBOX_LINK" },
+        function renderLessonsList() {
+            const list = document.getElementById('lessons-list');
+            list.innerHTML = lessons.map(lesson => `
+                <button class="lesson-btn" onclick="selectLesson(${lesson.id}, '${lesson.name}')">
+                    <span>${lesson.number}. ${lesson.name}</span>
+                    <i data-lucide="play" style="width:14px;height:14px;"></i>
+                </button>
+            `).join('');
+            lucide.createIcons();
+        }
 
-   Masalan:
-   { id: 11, title: "Phishing hujumlari", url: "https://www.dropbox.com/s/abc123/dars11.mp3?dl=0" },
+        function selectLesson(id, name) {
+            const lesson = lessons.find(l => l.id === id);
+            if (lesson) {
+                document.getElementById('text-input').value = `${lesson.number}. ${lesson.name}`;
+                playLesson(lesson.url, name);
+            }
+        }
 
-   ☝️ url: Dropbox share linkini to'liq ko'chiring —
-   skript avtomatik to'g'ri formatga o'tkazadi.
-   ==================================================== */
+        function filterLessons() {
+            const search = document.getElementById('search-input').value.toLowerCase();
+            const list = document.getElementById('lessons-list');
+            const filtered = lessons.filter(l => l.name.toLowerCase().includes(search));
+            
+            list.innerHTML = filtered.map(lesson => `
+                <button class="lesson-btn" onclick="selectLesson(${lesson.id}, '${lesson.name}')">
+                    <span>${lesson.number}. ${lesson.name}</span>
+                    <i data-lucide="play" style="width:14px;height:14px;"></i>
+                </button>
+            `).join('');
+            lucide.createIcons();
+        }
 
-const LESSONS = [
-  { id: 1,  title: "Kirish",             url: "https://www.dropbox.com/scl/fi/l4t5esnzx5fftw8vb96tw/1.mp3?rlkey=mh4ohwg1qnhipjhwu6bol9wcv&st=a6kbbolm&dl=1"  },
-  { id: 2,  title: "Tarmoq asoslari",    url: "https://www.dropbox.com/s/LINK_2/audio.mp3?dl=0"  },
-  { id: 3,  title: "Linux CLI",          url: "https://www.dropbox.com/s/LINK_3/audio.mp3?dl=0"  },
-  { id: 4,  title: "Nmap skaneri",       url: "https://www.dropbox.com/s/LINK_4/audio.mp3?dl=0"  },
-  { id: 5,  title: "SQL Injection",      url: "https://www.dropbox.com/s/LINK_5/audio.mp3?dl=0"  },
-  { id: 6,  title: "XSS hujumi",         url: "https://www.dropbox.com/s/LINK_6/audio.mp3?dl=0"  },
-  { id: 7,  title: "Metasploit",         url: "https://www.dropbox.com/s/LINK_7/audio.mp3?dl=0"  },
-  { id: 8,  title: "Wireshark",          url: "https://www.dropbox.com/s/LINK_8/audio.mp3?dl=0"  },
-  { id: 9,  title: "Kriptografiya",      url: "https://www.dropbox.com/s/LINK_9/audio.mp3?dl=0"  },
-  { id: 10, title: "CTF — 1-bosqich",    url: "https://www.dropbox.com/s/LINK_10/audio.mp3?dl=0" },
-  /* --- YANGI DARSLARNI SHU YERDAN PASTGA QO'SHING --- */
-];
+        function playLesson(url, lessonName) {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio = null;
+            }
 
-/* ====================================================
-   ⚙️ QUYIDAGI KODGA TEGMANG
-   ==================================================== */
+            isPlaying = true;
+            const bubble = document.getElementById('speech-bubble');
+            bubble.textContent = `▶ ${lessonName}`;
+            bubble.classList.add('visible');
 
-// Runtime state (localStorage orqali saqlanadi — rang belgilash)
-let states   = {};   // { lessonId: 'default'|'important'|'learned'|'done'|'review' }
-let currentId   = null;
-let filterMode  = 'all';
-let mouthTimer  = null;
-let floatX = 0, floatY = 0, floatVX = 0.35, floatVY = 0.22;
-let lastSpeedTs = 0;
+            startAnimation();
 
-// ── INIT ──────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', () => {
-  loadStates();
-  renderGrid();
-  updateStats();
-  initMatrix();
-  initFaceFloat();
-  initBlink();
-  initSignalFlicker();
-  initAudio();
-  initLongPress();
-  setFooterDate();
-});
+            // Try to play audio from Dropbox
+            currentAudio = new Audio(url);
+            currentAudio.crossOrigin = 'anonymous';
+            
+            currentAudio.onerror = () => {
+                console.error('Darslik yuklanmadi:', url);
+                bubble.textContent = `❌ Darslik yuklanmadi`;
+                speakSynthetic(`${lessonName} darslik yuklanmadi`);
+            };
 
-// ── LOCALSTORAGE (rang holatlari) ─────────────────
-function loadStates() {
-  try { states = JSON.parse(localStorage.getItem('cyStates') || '{}'); } catch { states = {}; }
-}
-function saveStates() {
-  try { localStorage.setItem('cyStates', JSON.stringify(states)); } catch {}
-}
+            currentAudio.onended = () => {
+                stopSpeaking();
+            };
 
-// ── INDEXEDDB (audio cache) ────────────────────────
-// Har bir dars audiosi birinchi marta yuklanib IDB'da saqlanadi.
-// Keyingi bosmada to'g'ri IDB'dan o'qiladi — internet kerak emas.
+            currentAudio.play().catch(err => {
+                console.error('Audio play error:', err);
+                speakSynthetic(`${lessonName} darslik`);
+            });
+        }
 
-const DB_NAME    = 'CyberAudioCache';
-const DB_VERSION = 1;
-const STORE      = 'audios';
-let   idb        = null;
+        function speakSynthetic(text) {
+            const ctx = getAudioContext();
+            const chars = text.replace(/\s+/g, ' ').split('');
+            const phonemeDuration = 0.12;
+            const pauseDuration = 0.08;
+            let currentTime = ctx.currentTime + 0.05;
 
-function openIDB() {
-  return new Promise((res, rej) => {
-    if (idb) return res(idb);
-    const req = indexedDB.open(DB_NAME, DB_VERSION);
-    req.onupgradeneeded = e => e.target.result.createObjectStore(STORE);
-    req.onsuccess = e => { idb = e.target.result; res(idb); };
-    req.onerror   = e => rej(e.target.error);
-  });
-}
+            chars.forEach((char, i) => {
+                if (char === ' ') {
+                    currentTime += pauseDuration * 2;
+                    return;
+                }
+                const freq = charToFreq(char);
+                const type = 'aeiouAEIOU'.includes(char) ? 'sine' : 'sawtooth';
+                playPhoneme(ctx, currentTime, phonemeDuration, freq, type);
+                currentTime += phonemeDuration + pauseDuration;
+            });
 
-async function getCached(id) {
-  const db = await openIDB();
-  return new Promise((res, rej) => {
-    const tx  = db.transaction(STORE, 'readonly');
-    const req = tx.objectStore(STORE).get(String(id));
-    req.onsuccess = e => res(e.target.result || null);
-    req.onerror   = e => rej(e.target.error);
-  });
-}
+            const totalDuration = (currentTime - ctx.currentTime) * 1000;
+            setTimeout(() => stopSpeaking(), totalDuration + 200);
+        }
 
-async function putCached(id, blob) {
-  const db = await openIDB();
-  return new Promise((res, rej) => {
-    const tx  = db.transaction(STORE, 'readwrite');
-    const req = tx.objectStore(STORE).put(blob, String(id));
-    req.onsuccess = () => res();
-    req.onerror   = e => rej(e.target.error);
-  });
-}
+        // Web Audio API based speech synthesizer
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
 
-// ── RENDER GRID ───────────────────────────────────
-function renderGrid(query) {
-  const grid = document.getElementById('lesson-grid');
-  grid.innerHTML = '';
-  const q = (query || '').toLowerCase().trim();
+        function playPhoneme(ctx, startTime, duration, freq, type) {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            const filter = ctx.createBiquadFilter();
 
-  LESSONS.forEach(lesson => {
-    const state  = states[lesson.id] || 'default';
-    const matchF = filterMode === 'all'
-      || (filterMode === 'learned'   && state === 'learned')
-      || (filterMode === 'important' && state === 'important')
-      || (filterMode === 'new'       && state === 'default');
-    const matchQ = !q || String(lesson.id).includes(q) || lesson.title.toLowerCase().includes(q);
+            osc.type = type || 'sawtooth';
+            osc.frequency.setValueAtTime(freq, startTime);
+            osc.frequency.linearRampToValueAtTime(freq * 0.9, startTime + duration);
 
-    const btn = document.createElement('div');
-    btn.className = `lesson-btn state-${state}${(!matchF || !matchQ) ? ' hidden' : ''}${lesson.id === currentId ? ' active-playing' : ''}`;
-    btn.dataset.id  = lesson.id;
-    btn.title       = `${lesson.id}. ${lesson.title}`;
-    btn.innerHTML   = `<span class="ln">${lesson.id}</span><span class="lt">${lesson.title}</span>`;
-    btn.addEventListener('click', () => playLesson(lesson.id));
-    grid.appendChild(btn);
-  });
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(1200, startTime);
+            filter.frequency.linearRampToValueAtTime(800, startTime + duration);
 
-  // Cache holati belgisini yangilash
-  refreshCacheIcons();
-}
+            gain.gain.setValueAtTime(0, startTime);
+            gain.gain.linearRampToValueAtTime(0.15, startTime + 0.02);
+            gain.gain.setValueAtTime(0.15, startTime + duration - 0.03);
+            gain.gain.linearRampToValueAtTime(0, startTime + duration);
 
-// Keshda bor darslarni belgilash (⬇ tugmachasi)
-async function refreshCacheIcons() {
-  const db = await openIDB().catch(() => null);
-  if (!db) return;
-  document.querySelectorAll('.lesson-btn').forEach(async btn => {
-    const id  = btn.dataset.id;
-    const has = await getCached(id).catch(() => null);
-    const mark = btn.querySelector('.cache-mark');
-    if (has && !mark) {
-      const m = document.createElement('span');
-      m.className = 'cache-mark';
-      m.title = 'Offline saqlangan';
-      m.textContent = '💾';
-      btn.appendChild(m);
-    }
-  });
-}
+            osc.connect(filter);
+            filter.connect(gain);
+            gain.connect(ctx.destination);
 
-// ── PLAY (yuklab ol → keyin o'yna) ────────────────
-async function playLesson(id) {
-  const lesson = LESSONS.find(l => l.id === id);
-  if (!lesson) return;
+            osc.start(startTime);
+            osc.stop(startTime + duration);
+        }
 
-  // Agar allaqachon shu dars o'ynalyapti — to'xtat/davom et
-  if (currentId === id) {
-    const a = document.getElementById('main-audio');
-    a.paused ? a.play() : a.pause();
-    return;
-  }
+        function charToFreq(char) {
+            const vowels = 'aeiouAEIOU';
+            const code = char.charCodeAt(0);
+            if (vowels.includes(char)) {
+                return 180 + (code % 5) * 30;
+            }
+            return 100 + (code % 10) * 15;
+        }
 
-  currentId = id;
-  renderGrid(document.getElementById('search-input').value);
-  setNowPlaying(`⏳ Yuklanmoqda… ${lesson.id}. ${lesson.title.toUpperCase()}`);
+        function speakText() {
+            const text = document.getElementById('text-input').value.trim();
+            if (!text || isPlaying) return;
 
-  try {
-    // 1. Keshdan tekshir
-    let blob = await getCached(id);
+            isPlaying = true;
+            speakSynthetic(text);
+        }
 
-    if (!blob) {
-      // 2. Yuklab ol
-      setNowPlaying(`⬇ Yuklanmoqda… ${lesson.id}. ${lesson.title.toUpperCase()}`);
-      showProgress(0);
+        function startAnimation() {
+            const mouth = document.getElementById('mouth');
+            const bars = [
+                document.getElementById('bar1'),
+                document.getElementById('bar2'),
+                document.getElementById('bar3'),
+                document.getElementById('bar4'),
+                document.getElementById('bar5')
+            ];
 
-      const directURL = toDirectURL(lesson.url);
-      blob = await downloadWithProgress(directURL, pct => showProgress(pct));
+            const animationInterval = setInterval(() => {
+                if (!isPlaying) {
+                    clearInterval(animationInterval);
+                    return;
+                }
+                mouth.classList.toggle('speaking');
+                bars.forEach(bar => {
+                    bar.style.height = (6 + Math.random() * 24) + 'px';
+                });
+                if (Math.random() < 0.05) {
+                    document.getElementById('eye-left').classList.add('blink');
+                    document.getElementById('eye-right').classList.add('blink');
+                    setTimeout(() => {
+                        document.getElementById('eye-left').classList.remove('blink');
+                        document.getElementById('eye-right').classList.remove('blink');
+                    }, 150);
+                }
+            }, 100);
+        }
 
-      // 3. IDB'ga saqlash
-      await putCached(id, blob);
-      hideProgress();
-      refreshCacheIcons();
-    } else {
-      hideProgress();
-    }
+        function stopSpeaking() {
+            isPlaying = false;
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio = null;
+            }
+            document.getElementById('mouth').classList.remove('speaking');
+            document.getElementById('speech-bubble').classList.remove('visible');
+            ['bar1','bar2','bar3','bar4','bar5'].forEach(id => {
+                document.getElementById(id).style.height = '8px';
+            });
+        }
 
-    // 4. O'yna
-    const blobURL = URL.createObjectURL(blob);
-    const audio   = document.getElementById('main-audio');
-    audio.src     = blobURL;
-    audio.load();
-    await audio.play();
-    setNowPlaying(`▶ ${lesson.id}. ${lesson.title.toUpperCase()}`);
+        // Element SDK
+        const defaultConfig = {
+            page_title: "🤖 Darslik Robot",
+            header_text: "Darsliklarni o'qing va robot gapirib beradi"
+        };
 
-  } catch(err) {
-    console.error(err);
-    hideProgress();
-    setNowPlaying(`❌ Xato: ${lesson.title} yuklanmadi`);
-    currentId = null;
-    renderGrid(document.getElementById('search-input').value);
-  }
-}
+        function applyConfig(config) {
+            document.getElementById('page-title').textContent = config.page_title || defaultConfig.page_title;
+            document.getElementById('header-text').textContent = config.header_text || defaultConfig.header_text;
+        }
 
-function setNowPlaying(txt) {
-  document.getElementById('now-playing').textContent = txt;
-}
+        window.elementSdk.init({
+            defaultConfig,
+            onConfigChange: async (config) => { applyConfig(config); },
+            mapToCapabilities: (config) => ({
+                recolorables: [],
+                borderables: [],
+                fontEditable: undefined,
+                fontSizeable: undefined
+            }),
+            mapToEditPanelValues: (config) => new Map([
+                ["page_title", config.page_title || defaultConfig.page_title],
+                ["header_text", config.header_text || defaultConfig.header_text]
+            ])
+        });
 
-function toDirectURL(url) {
-  if (!url) return '';
-  if (url.includes('dropbox.com') && !url.includes('dl.dropboxusercontent.com')) {
-    return url
-      .replace('www.dropbox.com', 'dl.dropboxusercontent.com')
-      .replace(/[?&]dl=\d/, '')
-      + (url.includes('?') ? '&raw=1' : '?raw=1');
-  }
-  return url;
-}
-
-// Fetch + progress
-async function downloadWithProgress(url, onProgress) {
-  const resp = await fetch(url);
-  if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-
-  const total  = parseInt(resp.headers.get('Content-Length') || '0');
-  const reader = resp.body.getReader();
-  const chunks = [];
-  let   loaded = 0;
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    chunks.push(value);
-    loaded += value.length;
-    if (total > 0) onProgress(Math.round(loaded / total * 100));
-  }
-  return new Blob(chunks, { type: 'audio/mpeg' });
-}
-
-// ── PROGRESS BAR ─────────────────────────────────
-function showProgress(pct) {
-  let bar = document.getElementById('dl-progress');
-  if (!bar) {
-    bar = document.createElement('div');
-    bar.id = 'dl-progress';
-    bar.innerHTML = `<div id="dl-bar"></div><span id="dl-pct">0%</span>`;
-    document.getElementById('audio-player').insertBefore(bar, document.getElementById('main-audio'));
-  }
-  bar.style.display = 'flex';
-  document.getElementById('dl-bar').style.width  = pct + '%';
-  document.getElementById('dl-pct').textContent  = pct + '%';
-}
-function hideProgress() {
-  const bar = document.getElementById('dl-progress');
-  if (bar) bar.style.display = 'none';
-}
-
-// ── AUDIO SYNC ────────────────────────────────────
-function initAudio() {
-  const audio = document.getElementById('main-audio');
-  const viz   = document.getElementById('audio-viz');
-
-  audio.addEventListener('play',  () => { viz.classList.add('playing');    startMouth(); });
-  audio.addEventListener('pause', () => { viz.classList.remove('playing'); stopMouth();  });
-  audio.addEventListener('ended', () => {
-    viz.classList.remove('playing');
-    stopMouth();
-    document.getElementById('now-playing').textContent = 'Dars tugadi';
-    currentId = null;
-    renderGrid(document.getElementById('search-input').value);
-  });
-
-  // Visualizer bars
-  setInterval(() => {
-    if (audio.paused) return;
-    document.querySelectorAll('.bar').forEach(b => {
-      b.style.height = (Math.random() * 26 + 4) + 'px';
-    });
-  }, 90);
-}
-
-// ── MOUTH ─────────────────────────────────────────
-function startMouth() {
-  if (mouthTimer) clearInterval(mouthTimer);
-  mouthTick();
-}
-function stopMouth() {
-  if (mouthTimer) clearInterval(mouthTimer);
-  mouthTimer = null;
-  setMouth(false);
-}
-let mouthPhase = 0;
-function mouthTick() {
-  const audio = document.getElementById('main-audio');
-  if (audio.paused) { setMouth(false); return; }
-  mouthPhase = (mouthPhase + 1) % 3;
-  setMouth(mouthPhase !== 0);
-  const delay = Math.random() * 180 + 70;
-  mouthTimer = setTimeout(mouthTick, delay);
-}
-function setMouth(open) {
-  const mo = document.getElementById('mouth-open');
-  const mt = document.getElementById('teeth');
-  const mg = document.getElementById('tongue');
-  const mb = document.getElementById('mouth-base');
-  if (open) {
-    const op = (Math.random() * 0.55 + 0.45).toFixed(2);
-    const v  = 148 + Math.random() * 5;
-    mo.setAttribute('d',       `M82 ${v} Q100 ${154+Math.random()*5} 118 ${v} Q110 ${160+Math.random()*4} 100 ${163+Math.random()*3} Q90 ${160+Math.random()*4} 82 ${v} Z`);
-    mo.setAttribute('opacity', op);
-    mt.setAttribute('opacity', (op * 0.9).toFixed(2));
-    mg.setAttribute('opacity', (op * 0.4).toFixed(2));
-    mb.setAttribute('opacity', '0');
-  } else {
-    mo.setAttribute('opacity', '0');
-    mt.setAttribute('opacity', '0');
-    mg.setAttribute('opacity', '0');
-    mb.setAttribute('opacity', '0.8');
-  }
-}
-
-// ── FACE FLOAT ────────────────────────────────────
-function initFaceFloat() {
-  const face = document.getElementById('face-wrapper');
-  const MAX_X = 28, MAX_Y = 22;
-
-  function step(ts) {
-    if (ts - lastSpeedTs > 2200 + Math.random() * 2800) {
-      floatVX = (Math.random() - 0.5) * 1.4;
-      floatVY = (Math.random() - 0.5) * 1.0;
-      lastSpeedTs = ts;
-    }
-    const spd = 0.15 + Math.random() * 0.05;
-    floatX += floatVX * spd;
-    floatY += floatVY * spd;
-    if (floatX > MAX_X || floatX < -MAX_X) { floatVX *= -1; floatX = Math.max(-MAX_X, Math.min(MAX_X, floatX)); }
-    if (floatY > MAX_Y || floatY < -MAX_Y) { floatVY *= -1; floatY = Math.max(-MAX_Y, Math.min(MAX_Y, floatY)); }
-    face.style.transform = `translate(${floatX.toFixed(2)}px, ${floatY.toFixed(2)}px)`;
-    requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
-}
-
-// ── BLINK ─────────────────────────────────────────
-function initBlink() {
-  function blink() {
-    const ll = document.getElementById('left-eyelid');
-    const rl = document.getElementById('right-eyelid');
-    if (!ll) return;
-    ll.setAttribute('d', 'M58 92 Q72 100 86 92');
-    rl.setAttribute('d', 'M114 92 Q128 100 142 92');
-    setTimeout(() => {
-      ll.setAttribute('d', 'M58 92 Q72 82 86 92');
-      rl.setAttribute('d', 'M114 92 Q128 82 142 92');
-    }, 130);
-    setTimeout(blink, 2200 + Math.random() * 3800);
-  }
-  setTimeout(blink, 1800);
-}
-
-// ── SIGNAL FLICKER ────────────────────────────────
-function initSignalFlicker() {
-  setInterval(() => {
-    const el = document.getElementById('signal-val');
-    if (el) el.textContent = (95 + Math.floor(Math.random() * 5)) + '%';
-  }, 2800);
-}
-
-// ── SEARCH ───────────────────────────────────────
-function searchLessons() {
-  renderGrid(document.getElementById('search-input').value);
-}
-document.addEventListener('DOMContentLoaded', () => {
-  const inp = document.getElementById('search-input');
-  inp.addEventListener('input',  () => renderGrid(inp.value));
-  inp.addEventListener('keydown', e => { if (e.key === 'Enter') renderGrid(inp.value); });
-});
-
-// ── FILTER ───────────────────────────────────────
-function filterLessons(state, btnEl) {
-  filterMode = state;
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  if (btnEl) btnEl.classList.add('active');
-  renderGrid(document.getElementById('search-input').value);
-}
-
-// ── LONG PRESS → COLOR MENU ───────────────────────
-let pressTimer   = null;
-let ctxTargetId  = null;
-
-function initLongPress() {
-  const grid = document.getElementById('lesson-grid');
-
-  function start(x, y, id) {
-    ctxTargetId = id;
-    pressTimer = setTimeout(() => openCtxMenu(x, y), 580);
-  }
-  function cancel() { clearTimeout(pressTimer); }
-
-  grid.addEventListener('mousedown', e => {
-    const btn = e.target.closest('.lesson-btn');
-    if (btn) start(e.clientX, e.clientY, +btn.dataset.id);
-  });
-  grid.addEventListener('mouseup',    cancel);
-  grid.addEventListener('mouseleave', cancel);
-  grid.addEventListener('touchstart', e => {
-    const btn = e.target.closest('.lesson-btn');
-    if (!btn) return;
-    const t = e.touches[0];
-    start(t.clientX, t.clientY, +btn.dataset.id);
-  }, { passive: true });
-  grid.addEventListener('touchend',   cancel);
-}
-
-function openCtxMenu(x, y) {
-  const menu = document.getElementById('context-menu');
-  const ov   = document.getElementById('ctx-overlay');
-  menu.style.display = 'block';
-  ov.style.display   = 'block';
-  const l = Math.min(x, window.innerWidth  - 200);
-  const t = Math.min(y, window.innerHeight - 260);
-  menu.style.left = l + 'px';
-  menu.style.top  = t + 'px';
-}
-function closeContextMenu() {
-  document.getElementById('context-menu').style.display = 'none';
-  document.getElementById('ctx-overlay').style.display  = 'none';
-  ctxTargetId = null;
-}
-function setLessonColor(state) {
-  if (ctxTargetId == null) return;
-  states[ctxTargetId] = state;
-  saveStates();
-  updateStats();
-  renderGrid(document.getElementById('search-input').value);
-  closeContextMenu();
-}
-
-// ── STATS ─────────────────────────────────────────
-function updateStats() {
-  document.getElementById('total-count').textContent   = LESSONS.length + ' dars';
-  const done = LESSONS.filter(l => ['learned','done'].includes(states[l.id])).length;
-  document.getElementById('marked-count').textContent  = done + " o'rganildi";
-}
-
-// ── FOOTER DATE ───────────────────────────────────
-function setFooterDate() {
-  const el = document.getElementById('footer-date');
-  if (el) el.textContent = new Date().toLocaleDateString('uz-UZ', { year: 'numeric', month: 'long', day: 'numeric' });
-}
-
-// ── MATRIX RAIN ───────────────────────────────────
-function initMatrix() {
-  const canvas = document.getElementById('matrix-canvas');
-  const ctx    = canvas.getContext('2d');
-  const CHARS  = '01アイウエオカキクケサシスセタチツテナニABCDEF<>{}|!@#$%^';
-  const FS     = 13;
-  let drops    = [];
-
-  function resize() {
-    canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight;
-    drops = Array(Math.floor(canvas.width / FS)).fill(1);
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
-  setInterval(() => {
-    ctx.fillStyle = 'rgba(4,6,26,0.06)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.font = FS + 'px "Share Tech Mono", monospace';
-    drops.forEach((y, i) => {
-      ctx.fillStyle = i % 7 === 0 ? '#ff1a3c' : '#00aaff';
-      ctx.fillText(CHARS[Math.floor(Math.random() * CHARS.length)], i * FS, y * FS);
-      if (y * FS > canvas.height && Math.random() > 0.975) drops[i] = 0;
-      drops[i]++;
-    });
-  }, 55);
-}
-  </script>
-</body>
+        renderLessonsList();
+        lucide.createIcons();
+    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a01b5e09ef1197a2',t:'MTc3OTc4MzY5Ng=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
