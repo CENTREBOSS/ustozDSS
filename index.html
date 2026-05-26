@@ -1,4 +1,4 @@
-html_code = """<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
@@ -257,12 +257,12 @@ html_code = """<!DOCTYPE html>
     <div class="bg-glow"></div>
 
     <div id="cors-toast">
-        ⚠️ Google Drive CORS cheklovi tufayli brauzer audioni blokladi. Proxy rejimiga o'tildi...
+        ⚠️ CORS cheklovi tufayli brauzer audioni blokladi. Proxy rejimiga o'tildi...
     </div>
 
     <header>
         <h1>Cybernetic AI Face</h1>
-        <p class="subtitle">Google Drive audio oqimi va dinamik yuz vizualizatsiyasi</p>
+        <p class="subtitle">GitHub audio oqimi va dinamik yuz vizualizatsiyasi</p>
     </header>
 
     <div class="canvas-container">
@@ -285,11 +285,12 @@ html_code = """<!DOCTYPE html>
     <audio id="audioPlayer" crossorigin="anonymous"></audio>
 
     <script>
-        // 1. Google Drive darslar ro'yxati (FILE_ID laringizni shu yerga yozasiz)
+        // 1. GitHub (yoki to'g'ridan-to'g'ri) darslar ro'yxati (To'liq URL larni shu yerga yozasiz)
+        // Eslatma: GitHubdan "Raw" havolani oling (masalan, raw.githubusercontent.com/...)
         const LESSONS = {
-            1: { url: "audio1.mp3", t: "1-Dars: Kirish va Tizim integratsiyasi" },
-            2: { url: "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74", t: "2-Dars: Sun'iy intellekt va kiber-nutq" },
-            3: { url: "2CyjNWt1YSB6oGNLwCeCAAkhvVVrqumuG85", t: "3-Dars: Tarmoq xavfsizligi asoslari" }
+            1: { url: "https://raw.githubusercontent.com/username/repository/main/audio1.mp3", t: "1-Dars: Kirish va Tizim integratsiyasi" },
+            2: { url: "https://raw.githubusercontent.com/username/repository/main/audio2.mp3", t: "2-Dars: Sun'iy intellekt va kiber-nutq" },
+            3: { url: "https://raw.githubusercontent.com/username/repository/main/audio3.mp3", t: "3-Dars: Tarmoq xavfsizligi asoslari" }
         };
 
         // Global o'zgaruvchilar
@@ -344,9 +345,8 @@ html_code = """<!DOCTYPE html>
             statusText.innerText = "Yuklanmoqda...";
             loader.style.display = 'inline-block';
 
-            // Google Drive to'g'ridan-to'g'ri yuklash havolasini shakllantirish
-            const fileId = LESSONS[id].url;
-            audio.src = `https://drive.google.com/uc?export=download&id=${fileId}`;
+            // To'g'ridan-to'g'ri GitHub yoki server havolasini olish
+            audio.src = LESSONS[id].url;
             audio.load();
 
             // Avtomatik ijro etishga urinish
@@ -406,18 +406,21 @@ html_code = """<!DOCTYPE html>
             }
         });
 
-        // Google Drive ba'zan CORS xatosi bersa, muqobil Proxy tizimiga o'tish
+        // GitHub yoki server ba'zan CORS xatosi bersa, muqobil Proxy tizimiga o'tish
         function handleCORS(err) {
             console.warn("CORS/Fetch error catch:", err);
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 5000);
             
             // Muqobil jamoat proxy serveri orqali qayta urinish (CORSni aylanib o'tish)
-            if (currentTrackId && !audio.src.includes('cors-anywhere')) {
-                const fileId = LESSONS[currentTrackId].url;
-                audio.src = `https://corsproxy.io/?` + encodeURIComponent(`https://drive.google.com/uc?export=download&id=${fileId}`);
+            if (currentTrackId && !audio.src.includes('corsproxy')) {
+                const fileUrl = LESSONS[currentTrackId].url;
+                audio.src = `https://corsproxy.io/?` + encodeURIComponent(fileUrl);
                 audio.load();
-                audio.play();
+                audio.play().then(() => {
+                    playBtn.innerText = "⏸";
+                    statusText.innerText = "Jonli ijro etilmoqda (Proxy)";
+                });
             }
         }
 
