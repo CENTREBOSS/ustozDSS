@@ -1,483 +1,735 @@
-<!doctype html>
-<html lang="uz" class="h-full">
- <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Speaking Robot</title>
-  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
-  <script src="/_sdk/element_sdk.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&amp;display=swap" rel="stylesheet">
-  <style>
-        html, body { height: 100%; margin: 0; }
-        body { font-family: 'Orbitron', sans-serif; }
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CyberAcademy — Kiberxavfsizlik O'quv Markazi</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:  #080812;
+  --ink2: #0d0d1f;
+  --ink3: #12122a;
+  --red:  #ff2244;
+  --red2: #cc0022;
+  --red-g: rgba(255,34,68,0.35);
+  --blue: #00aaff;
+  --blue2:#0055bb;
+  --blue-g:rgba(0,170,255,0.35);
+  --cyan: #00ffee;
+  --cyan-g:rgba(0,255,238,0.22);
+  --txt:  #c0d4f0;
+  --dim:  #4a5a7a;
+  --bdr:  rgba(0,170,255,0.18);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--ink);color:var(--txt);
+  font-family:'Exo 2',sans-serif;
+  min-height:100vh;overflow-x:hidden;position:relative;
+}
+/* GRID BG */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(0,170,255,0.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,170,255,0.035) 1px,transparent 1px);
+  background-size:48px 48px;
+  animation:gridDrift 22s linear infinite;
+  pointer-events:none;z-index:0;
+}
+@keyframes gridDrift{0%{transform:translateY(0)}100%{transform:translateY(48px)}}
+body::after{
+  content:'';position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse at 50% 0%,rgba(0,170,255,0.06) 0%,transparent 60%),
+    radial-gradient(ellipse at 15% 85%,rgba(255,34,68,0.05) 0%,transparent 50%);
+  pointer-events:none;z-index:0;
+}
 
-        .robot-container {
-            position: relative;
-            width: 200px;
-            height: 280px;
-            margin: 0 auto;
-        }
+/* ── HEADER ── */
+header{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  background:rgba(8,8,18,0.93);backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--bdr);
+  padding:11px 24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+}
+.logo{
+  font-family:'Orbitron',sans-serif;font-weight:900;font-size:1.05rem;
+  color:var(--cyan);text-shadow:0 0 22px var(--cyan-g);
+  letter-spacing:2px;white-space:nowrap;flex-shrink:0;
+}
+.logo span{color:var(--red)}
+.search-wrap{position:relative;flex:1;min-width:180px;max-width:400px}
+.search-wrap input{
+  width:100%;background:rgba(0,170,255,0.05);border:1px solid var(--bdr);
+  border-radius:6px;padding:8px 12px 8px 36px;
+  color:var(--txt);font-family:'Share Tech Mono',monospace;font-size:0.83rem;
+  outline:none;transition:border-color .3s,box-shadow .3s;
+}
+.search-wrap input::placeholder{color:var(--dim)}
+.search-wrap input:focus{border-color:var(--blue);box-shadow:0 0 12px var(--blue-g)}
+.s-icon{
+  position:absolute;left:10px;top:50%;transform:translateY(-50%);
+  color:var(--dim);font-size:0.82rem;pointer-events:none;
+}
+.hd-stats{
+  font-family:'Share Tech Mono',monospace;font-size:0.7rem;
+  color:var(--dim);margin-left:auto;flex-shrink:0;
+}
+.hd-stats b{color:var(--cyan)}
 
-        .robot-head {
-            width: 120px;
-            height: 100px;
-            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
-            border-radius: 20px;
-            margin: 0 auto;
-            position: relative;
-            border: 3px solid #00ff00;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
-        }
+/* ── MAIN ── */
+main{
+  position:relative;z-index:1;padding-top:76px;
+  display:flex;flex-direction:column;align-items:center;min-height:100vh;
+}
 
-        .robot-eye {
-            width: 24px;
-            height: 24px;
-            background: #0f5;
-            border-radius: 50%;
-            position: absolute;
-            top: 30px;
-            box-shadow: 0 0 10px #0f5;
-            transition: all 0.1s;
-        }
+/* ── HOLO STAGE ── */
+.holo-stage{
+  position:relative;width:270px;height:310px;
+  margin:28px auto 16px;flex-shrink:0;
+}
+.holo-wrap{
+  position:absolute;inset:0;
+  animation:floatPath 14s ease-in-out infinite;
+  transform-origin:center center;
+}
+@keyframes floatPath{
+  0%  {transform:translate(0,0)      rotate(0deg);   animation-timing-function:cubic-bezier(.45,.05,.55,.95)}
+  10% {transform:translate(14px,-20px) rotate(1.2deg); animation-timing-function:ease-in}
+  22% {transform:translate(-8px,-36px) rotate(-.8deg); animation-timing-function:ease-out}
+  35% {transform:translate(22px,-12px) rotate(1.8deg); animation-timing-function:cubic-bezier(.45,.05,.55,.95)}
+  48% {transform:translate(-4px,8px)  rotate(-.4deg); animation-timing-function:ease-in}
+  60% {transform:translate(-20px,-24px)rotate(.9deg);  animation-timing-function:ease-out}
+  72% {transform:translate(10px,-38px) rotate(-1.6deg);animation-timing-function:cubic-bezier(.45,.05,.55,.95)}
+  85% {transform:translate(18px,4px)  rotate(.6deg);  animation-timing-function:ease-in}
+  100%{transform:translate(0,0)      rotate(0deg);}
+}
+.holo-face-svg{
+  width:100%;height:100%;
+  filter:drop-shadow(0 0 16px rgba(0,255,238,.65)) drop-shadow(0 0 38px rgba(0,170,255,.3));
+}
+.holo-scanlines{
+  position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,255,238,.028) 3px,rgba(0,255,238,.028) 4px);
+  border-radius:50%;pointer-events:none;
+  animation:scanPulse 3.2s ease-in-out infinite;
+}
+@keyframes scanPulse{0%,100%{opacity:.5}50%{opacity:1}}
+.holo-ring{position:absolute;border-radius:50%;border:1px solid rgba(0,255,238,.28);animation:ringP 3s ease-in-out infinite}
+.holo-ring:nth-child(1){inset:-18px;animation-delay:0s}
+.holo-ring:nth-child(2){inset:-34px;border-color:rgba(0,170,255,.14);animation-delay:.9s}
+.holo-ring:nth-child(3){inset:-54px;border-color:rgba(255,34,68,.09);animation-delay:1.8s}
+@keyframes ringP{0%,100%{opacity:.25;transform:scale(1)}50%{opacity:1;transform:scale(1.04)}}
+.holo-label{
+  position:absolute;bottom:-26px;left:50%;transform:translateX(-50%);
+  font-family:'Share Tech Mono',monospace;font-size:.68rem;
+  color:var(--cyan);letter-spacing:3px;text-transform:uppercase;
+  text-shadow:0 0 10px var(--cyan-g);white-space:nowrap;
+}
+.holo-label::before{content:'▶ ';color:var(--red);animation:blink 1s step-end infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 
-        .robot-eye.left { left: 25px; }
-        .robot-eye.right { right: 25px; }
+/* ── PLAYER ── */
+.player-bar{width:100%;max-width:680px;margin:44px auto 22px;padding:0 18px}
+.player-card{
+  background:rgba(0,170,255,.04);border:1px solid var(--bdr);border-radius:12px;
+  padding:14px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  position:relative;overflow:hidden;
+}
+.player-card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(0,255,238,.025) 0%,transparent 60%);
+  pointer-events:none;
+}
+.np-info{flex:1;min-width:100px}
+.np-title{font-family:'Orbitron',monospace;font-size:.72rem;color:var(--cyan);letter-spacing:1.5px;text-transform:uppercase}
+.np-sub{font-family:'Share Tech Mono',monospace;font-size:.68rem;color:var(--dim);margin-top:3px}
+#audioPlayer{display:none}
+.waveform{display:flex;align-items:center;gap:2px;height:30px}
+.wbar{width:3px;background:var(--blue);border-radius:2px;height:3px;transition:height .05s}
+.wbar.on{background:var(--cyan)}
+.p-ctrl{display:flex;align-items:center;gap:8px}
+.cbtn{
+  background:none;border:1px solid var(--bdr);color:var(--blue);
+  width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:.82rem;
+  display:flex;align-items:center;justify-content:center;transition:all .3s;
+}
+.cbtn:hover{background:var(--blue);color:var(--ink);box-shadow:0 0 14px var(--blue-g);border-color:var(--blue)}
+.cbtn.play{width:42px;height:42px;background:rgba(0,170,255,.1);font-size:.95rem;border-color:var(--blue)}
+.cbtn.play:hover{background:var(--blue)}
 
-        .robot-eye.blink {
-            height: 4px;
-            top: 40px;
-        }
+/* ── LESSONS ── */
+.lessons-sec{width:100%;max-width:1200px;padding:0 18px 60px;position:relative;z-index:1}
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px}
+.sec-title{font-family:'Orbitron',monospace;font-size:.75rem;letter-spacing:3px;color:var(--dim);text-transform:uppercase}
+.sec-title b{color:var(--red)}
+.legend{display:flex;gap:12px;font-family:'Share Tech Mono',monospace;font-size:.66rem;color:var(--dim)}
+.ldot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px}
+.ldot.marked{background:var(--red);box-shadow:0 0 6px var(--red-g)}
+.ldot.cur{background:var(--blue);box-shadow:0 0 6px var(--blue-g)}
+.filter-tabs{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap}
+.tab{
+  background:transparent;border:1px solid var(--bdr);color:var(--dim);
+  font-family:'Share Tech Mono',monospace;font-size:.7rem;
+  padding:4px 13px;border-radius:20px;cursor:pointer;
+  transition:all .25s;text-transform:uppercase;letter-spacing:1px;
+}
+.tab:hover,.tab.on{border-color:var(--blue);color:var(--blue);background:rgba(0,170,255,.07);box-shadow:0 0 9px var(--blue-g)}
+.tab.on-red{border-color:var(--red)!important;color:var(--red)!important;background:rgba(255,34,68,.07)!important;box-shadow:0 0 9px var(--red-g)!important}
+.lessons-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(60px,1fr));gap:5px}
+.lbtn{
+  position:relative;aspect-ratio:1;
+  background:rgba(0,170,255,.045);border:1px solid rgba(0,170,255,.1);
+  border-radius:6px;color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:.7rem;
+  cursor:pointer;transition:all .22s;display:flex;align-items:center;justify-content:center;
+  user-select:none;-webkit-user-select:none;overflow:hidden;
+}
+.lbtn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,255,238,.035) 0%,transparent 70%);opacity:0;transition:opacity .3s}
+.lbtn:hover{border-color:var(--blue);color:var(--blue);background:rgba(0,170,255,.11);box-shadow:0 0 11px var(--blue-g);transform:scale(1.07);z-index:2}
+.lbtn:hover::before{opacity:1}
+.lbtn.marked{background:rgba(255,34,68,.11);border-color:var(--red);color:var(--red);box-shadow:0 0 9px var(--red-g)}
+.lbtn.cur{background:rgba(0,170,255,.17);border-color:var(--blue);color:#fff;box-shadow:0 0 15px var(--blue-g)}
+.lbtn.no-aud{opacity:.3;cursor:not-allowed}
+.lbtn.no-aud:hover{transform:none;border-color:rgba(0,170,255,.1);color:var(--dim);background:rgba(0,170,255,.045);box-shadow:none}
+.mdot{position:absolute;top:3px;right:3px;width:5px;height:5px;background:var(--red);border-radius:50%;box-shadow:0 0 5px var(--red-g);display:none}
+.lbtn.marked .mdot{display:block}
 
-        .robot-mouth {
-            width: 40px;
-            height: 12px;
-            background: #ff0000;
-            border-radius: 6px;
-            position: absolute;
-            bottom: 18px;
-            left: 50%;
-            transform: translateX(-50%);
-            transition: all 0.1s;
-            box-shadow: 0 0 8px rgba(255, 0, 0, 0.5);
-        }
+/* ── TOAST ── */
+.toast-c{position:fixed;bottom:22px;right:22px;z-index:3000;display:flex;flex-direction:column;gap:8px}
+.toast{
+  background:var(--ink3);border:1px solid var(--blue);border-radius:7px;
+  padding:9px 14px;font-family:'Share Tech Mono',monospace;font-size:.72rem;
+  color:var(--txt);box-shadow:0 0 18px var(--blue-g);
+  animation:tIn .28s ease;max-width:250px;
+}
+.toast.err{border-color:var(--red);box-shadow:0 0 18px var(--red-g)}
+@keyframes tIn{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:translateX(0)}}
 
-        .robot-mouth.speaking {
-            height: 20px;
-            border-radius: 10px;
-        }
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--ink)}
+::-webkit-scrollbar-thumb{background:var(--blue2);border-radius:3px}
 
-        .robot-body {
-            width: 100px;
-            height: 120px;
-            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
-            border-radius: 15px;
-            margin: 10px auto 0;
-            border: 3px solid #0f5;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
-        }
+@media(max-width:600px){
+  .holo-stage{width:200px;height:230px}
+  .lessons-grid{grid-template-columns:repeat(auto-fill,minmax(48px,1fr))}
+  .hd-stats{display:none}
+}
+</style>
+</head>
+<body>
 
-        .robot-screen {
-            width: 60px;
-            height: 60px;
-            background: #000;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .robot-screen .wave-bars {
-            display: flex;
-            align-items: center;
-            gap: 3px;
-            height: 30px;
-        }
-
-        .wave-bar {
-            width: 4px;
-            background: #0f5;
-            border-radius: 2px;
-            height: 8px;
-            transition: height 0.05s;
-        }
-
-        .robot-arm {
-            position: absolute;
-            width: 20px;
-            height: 80px;
-            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
-            border-radius: 10px;
-            top: 120px;
-            border: 2px solid #0f5;
-        }
-
-        .robot-arm.left { left: 15px; transform: rotate(5deg); }
-        .robot-arm.right { right: 15px; transform: rotate(-5deg); }
-
-        .speech-bubble {
-            position: absolute;
-            top: -60px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #1a1a1a;
-            color: #0f5;
-            padding: 10px 16px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-family: sans-serif;
-            white-space: nowrap;
-            box-shadow: 0 4px 12px rgba(0,255,0,0.2);
-            border: 2px solid #0f5;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .speech-bubble.visible { opacity: 1; }
-
-        .speech-bubble::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            border-left: 8px solid transparent;
-            border-right: 8px solid transparent;
-            border-top: 8px solid #0f5;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-        }
-
-        .robot-container { animation: float 3s ease-in-out infinite; }
-
-        .btn-speak {
-            background: linear-gradient(135deg, #0066cc, #0052a3);
-            border: none;
-            color: white;
-            padding: 14px 32px;
-            border-radius: 12px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 4px 15px rgba(0, 102, 204, 0.4);
-            border: 2px solid #0066cc;
-        }
-
-        .btn-speak:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(0, 102, 204, 0.6); }
-        .btn-speak:active { transform: scale(0.98); }
-        .btn-speak:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-        .input-text {
-            background: #0a0a0a;
-            border: 2px solid #0f5;
-            color: #0f5;
-            padding: 12px 16px;
-            border-radius: 10px;
-            font-family: sans-serif;
-            font-size: 16px;
-            width: 100%;
-            max-width: 400px;
-            transition: border-color 0.2s;
-        }
-
-        .input-text:focus { outline: none; border-color: #00ff00; box-shadow: 0 0 10px rgba(0,255,0,0.3); }
-        .input-text::placeholder { color: #0f5; opacity: 0.6; }
-
-        .lesson-btn {
-            background: #0f5;
-            color: #000;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: bold;
-            transition: all 0.2s;
-            width: 100%;
-            text-align: left;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .lesson-btn:hover { background: #00ff00; box-shadow: 0 0 8px rgba(0,255,0,0.5); }
-        .lesson-btn.active { background: #ff0000; color: white; }
-  </style>
-  <style>body { box-sizing: border-box; }</style>
-  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
- </head>
- <body class="h-full w-full bg-black flex flex-col items-center justify-start overflow-auto">
-  <div class="text-center p-6 w-full">
-   <h1 id="page-title" class="text-3xl font-bold text-red-500 mb-2">🤖 Darslik Robot</h1>
-   <p id="header-text" class="text-blue-400 mb-6 text-sm">Darsliklarni o'qing va robot gapirib beradi</p>
-   <div class="robot-container mb-8">
-    <div class="speech-bubble" id="speech-bubble"></div>
-    <div class="robot-arm left"></div>
-    <div class="robot-arm right"></div>
-    <div class="robot-head">
-     <div class="robot-eye left" id="eye-left"></div>
-     <div class="robot-eye right" id="eye-right"></div>
-     <div class="robot-mouth" id="mouth"></div>
-    </div>
-    <div class="robot-body">
-     <div class="robot-screen">
-      <div class="wave-bars">
-       <div class="wave-bar" id="bar1"></div>
-       <div class="wave-bar" id="bar2"></div>
-       <div class="wave-bar" id="bar3"></div>
-       <div class="wave-bar" id="bar4"></div>
-       <div class="wave-bar" id="bar5"></div>
-      </div>
-     </div>
-    </div>
-   </div>
-   <div class="flex flex-col items-center gap-6 w-full px-4">
-    <div class="w-full max-w-600px">
-     <div class="flex gap-2 mb-4"><input type="text" id="search-input" placeholder="Qidiruv..." class="flex-1 input-text" style="max-width:none;"> <button onclick="filterLessons()" class="btn-speak" style="padding:12px 16px;"> <i data-lucide="search" style="width:16px;height:16px;display:inline-block;"></i> </button>
-     </div>
-     <div id="lessons-list" class="grid gap-2" style="max-height:300px;overflow-y:auto;background:#0a0a0a;padding:12px;border-radius:10px;border:2px solid #0f5;"></div>
-    </div>
-    <div class="flex flex-col items-center gap-4"><input type="text" class="input-text" id="text-input" placeholder="Matn kiriting yoki darslik tanlang..." value="Salom, men robotman!">
-     <div class="flex gap-3 flex-wrap justify-center">
-      <button class="btn-speak" id="btn-speak" onclick="speakText()"> <i data-lucide="volume-2" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:6px;"></i> Gapirtirish </button> <button class="btn-speak" id="btn-stop" onclick="stopSpeaking()" style="background:linear-gradient(135deg,#1f2937,#111827);"> <i data-lucide="square" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:6px;"></i> To'xtatish </button>
-     </div>
-    </div>
-   </div>
+<header>
+  <div class="logo">CYBER<span>ACE</span></div>
+  <div class="search-wrap">
+    <span class="s-icon">⌕</span>
+    <input type="text" id="searchInput" placeholder="Dars raqami yoki mavzu...">
   </div>
-  <script>
-        // Database
-        const lessons = [
-            { id: 1, number: '01', name: '1', url: 'https://www.dropbox.com/scl/fi/l4t5esnzx5fftw8vb96tw/1.mp3?rlkey=mh4ohwg1qnhipjhwu6bol9wcv&st=druxub8j&dl=1' },
-            { id: 2, number: '02', name: 'Fizika', url: 'https://www.dropbox.com/scl/fi/abc123/fizika.mp3?rlkey=test&dl=1' },
-            { id: 3, number: '03', name: 'Ingliz Tili', url: 'https://www.dropbox.com/scl/fi/xyz789/english.mp3?rlkey=test2&dl=1' },
-            { id: 4, number: '04', name: 'Kimyo', url: 'https://www.dropbox.com/scl/fi/qwe456/kimyo.mp3?rlkey=test3&dl=1' },
-            { id: 5, number: '05', name: 'Biologiya', url: 'https://www.dropbox.com/scl/fi/asd789/bio.mp3?rlkey=test4&dl=1' },
-        ];
+  <div class="hd-stats">
+    Jami: <b id="totalCount">0</b> &nbsp;|&nbsp; Belgilangan: <b id="markedCount">0</b>
+  </div>
+</header>
 
-        let currentAudio = null;
-        let isPlaying = false;
-        let audioCtx = null;
+<main>
+  <!-- HOLOGRAPHIC FACE -->
+  <div class="holo-stage">
+    <div class="holo-ring"></div>
+    <div class="holo-ring"></div>
+    <div class="holo-ring"></div>
+    <div class="holo-wrap" id="holoWrap">
+      <svg class="holo-face-svg" viewBox="0 0 280 320" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="fg" cx="50%" cy="44%" r="52%">
+            <stop offset="0%" stop-color="#162838"/>
+            <stop offset="55%" stop-color="#091820"/>
+            <stop offset="100%" stop-color="#040c14"/>
+          </radialGradient>
+          <radialGradient id="eg" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#00ffee"/>
+            <stop offset="100%" stop-color="#00aaff" stop-opacity="0.2"/>
+          </radialGradient>
+          <filter id="fglow"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <linearGradient id="scanG" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#00ffee" stop-opacity="0"/>
+            <stop offset="50%" stop-color="#00ffee" stop-opacity="0.14"/>
+            <stop offset="100%" stop-color="#00ffee" stop-opacity="0"/>
+          </linearGradient>
+          <clipPath id="fc"><ellipse cx="140" cy="155" rx="108" ry="130"/></clipPath>
+        </defs>
 
-        function renderLessonsList() {
-            const list = document.getElementById('lessons-list');
-            list.innerHTML = lessons.map(lesson => `
-                <button class="lesson-btn" onclick="selectLesson(${lesson.id}, '${lesson.name}')">
-                    <span>${lesson.number}. ${lesson.name}</span>
-                    <i data-lucide="play" style="width:14px;height:14px;"></i>
-                </button>
-            `).join('');
-            lucide.createIcons();
-        }
+        <!-- Face base -->
+        <ellipse cx="140" cy="155" rx="108" ry="130" fill="url(#fg)" filter="url(#fglow)"/>
+        <ellipse cx="140" cy="155" rx="108" ry="130" fill="none" stroke="#00ffee" stroke-width="0.5" stroke-opacity="0.45"/>
 
-        function selectLesson(id, name) {
-            const lesson = lessons.find(l => l.id === id);
-            if (lesson) {
-                document.getElementById('text-input').value = `${lesson.number}. ${lesson.name}`;
-                playLesson(lesson.url, name);
-            }
-        }
+        <!-- Forehead lines -->
+        <line x1="78" y1="58" x2="202" y2="58" stroke="#00aaff" stroke-width="0.5" stroke-opacity="0.25"/>
+        <line x1="92" y1="48" x2="188" y2="48" stroke="#00ffee" stroke-width="0.35" stroke-opacity="0.18"/>
 
-        function filterLessons() {
-            const search = document.getElementById('search-input').value.toLowerCase();
-            const list = document.getElementById('lessons-list');
-            const filtered = lessons.filter(l => l.name.toLowerCase().includes(search));
-            
-            list.innerHTML = filtered.map(lesson => `
-                <button class="lesson-btn" onclick="selectLesson(${lesson.id}, '${lesson.name}')">
-                    <span>${lesson.number}. ${lesson.name}</span>
-                    <i data-lucide="play" style="width:14px;height:14px;"></i>
-                </button>
-            `).join('');
-            lucide.createIcons();
-        }
+        <!-- Circuit dots forehead -->
+        <circle cx="118" cy="73" r="1.4" fill="#00ffee" fill-opacity="0.55"/>
+        <circle cx="140" cy="68" r="2" fill="#00ffee" fill-opacity="0.8"/>
+        <circle cx="162" cy="73" r="1.4" fill="#00ffee" fill-opacity="0.55"/>
+        <line x1="118" y1="73" x2="140" y2="68" stroke="#00ffee" stroke-width="0.4" stroke-opacity="0.4"/>
+        <line x1="140" y1="68" x2="162" y2="73" stroke="#00ffee" stroke-width="0.4" stroke-opacity="0.4"/>
 
-        function playLesson(url, lessonName) {
-            if (currentAudio) {
-                currentAudio.pause();
-                currentAudio = null;
-            }
+        <!-- Temple tech -->
+        <line x1="38" y1="143" x2="58" y2="143" stroke="#00ffee" stroke-width="0.8" stroke-opacity="0.4"/>
+        <line x1="36" y1="149" x2="53" y2="149" stroke="#00aaff" stroke-width="0.5" stroke-opacity="0.28"/>
+        <circle cx="35" cy="143" r="2" fill="#00ffee" fill-opacity="0.45"/>
+        <line x1="242" y1="143" x2="222" y2="143" stroke="#00ffee" stroke-width="0.8" stroke-opacity="0.4"/>
+        <line x1="244" y1="149" x2="227" y2="149" stroke="#00aaff" stroke-width="0.5" stroke-opacity="0.28"/>
+        <circle cx="245" cy="143" r="2" fill="#00ffee" fill-opacity="0.45"/>
 
-            isPlaying = true;
-            const bubble = document.getElementById('speech-bubble');
-            bubble.textContent = `▶ ${lessonName}`;
-            bubble.classList.add('visible');
+        <!-- Cheek glow -->
+        <ellipse cx="83" cy="174" rx="20" ry="11" fill="#00aaff" fill-opacity="0.035"/>
+        <ellipse cx="197" cy="174" rx="20" ry="11" fill="#00aaff" fill-opacity="0.035"/>
 
-            startAnimation();
+        <!-- Left eye -->
+        <g filter="url(#fglow)">
+          <ellipse cx="105" cy="134" rx="23" ry="14" fill="#041525"/>
+          <ellipse cx="105" cy="134" rx="23" ry="14" fill="none" stroke="#00ffee" stroke-width="1"/>
+          <ellipse cx="105" cy="134" rx="15" ry="9.5" fill="#051e32"/>
+          <ellipse cx="105" cy="134" rx="8.5" ry="8.5" fill="url(#eg)"/>
+          <ellipse cx="105" cy="134" rx="5" ry="5" fill="#00111e"/>
+          <ellipse cx="103" cy="132" rx="2" ry="2" fill="#00ffee" fill-opacity="0.85"/>
+          <ellipse cx="105" cy="134" rx="8.5" ry="8.5" fill="none" stroke="#00ffee" stroke-width="0.5" stroke-opacity="0.65"/>
+          <ellipse cx="105" cy="134" rx="11.5" ry="11.5" fill="none" stroke="#00aaff" stroke-width="0.4" stroke-opacity="0.35"/>
+        </g>
 
-            // Try to play audio from Dropbox
-            currentAudio = new Audio(url);
-            currentAudio.crossOrigin = 'anonymous';
-            
-            currentAudio.onerror = () => {
-                console.error('Darslik yuklanmadi:', url);
-                bubble.textContent = `❌ Darslik yuklanmadi`;
-                speakSynthetic(`${lessonName} darslik yuklanmadi`);
-            };
+        <!-- Right eye -->
+        <g filter="url(#fglow)">
+          <ellipse cx="175" cy="134" rx="23" ry="14" fill="#041525"/>
+          <ellipse cx="175" cy="134" rx="23" ry="14" fill="none" stroke="#00ffee" stroke-width="1"/>
+          <ellipse cx="175" cy="134" rx="15" ry="9.5" fill="#051e32"/>
+          <ellipse cx="175" cy="134" rx="8.5" ry="8.5" fill="url(#eg)"/>
+          <ellipse cx="175" cy="134" rx="5" ry="5" fill="#00111e"/>
+          <ellipse cx="173" cy="132" rx="2" ry="2" fill="#00ffee" fill-opacity="0.85"/>
+          <ellipse cx="175" cy="134" rx="8.5" ry="8.5" fill="none" stroke="#00ffee" stroke-width="0.5" stroke-opacity="0.65"/>
+          <ellipse cx="175" cy="134" rx="11.5" ry="11.5" fill="none" stroke="#00aaff" stroke-width="0.4" stroke-opacity="0.35"/>
+        </g>
 
-            currentAudio.onended = () => {
-                stopSpeaking();
-            };
+        <!-- Eyebrows -->
+        <path d="M82 117 Q105 108 128 115" stroke="#00aaff" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-opacity="0.65"/>
+        <path d="M152 115 Q175 108 198 117" stroke="#00aaff" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-opacity="0.65"/>
 
-            currentAudio.play().catch(err => {
-                console.error('Audio play error:', err);
-                speakSynthetic(`${lessonName} darslik`);
-            });
-        }
+        <!-- Nose -->
+        <path d="M132 147 Q137 163 133 173 Q140 180 147 173 Q143 163 148 147" stroke="#00aaff" stroke-width="0.7" fill="none" stroke-opacity="0.28"/>
+        <path d="M126 175 Q140 183 154 175" stroke="#00aaff" stroke-width="0.9" fill="none" stroke-opacity="0.32"/>
 
-        function speakSynthetic(text) {
-            const ctx = getAudioContext();
-            const chars = text.replace(/\s+/g, ' ').split('');
-            const phonemeDuration = 0.12;
-            const pauseDuration = 0.08;
-            let currentTime = ctx.currentTime + 0.05;
+        <!-- MOUTH — controlled by JS -->
+        <g id="mouthG">
+          <path id="mUpper" d="M112 206 Q122 202 131 205 Q140 199 149 205 Q158 202 168 206" stroke="#00ffee" stroke-width="1.2" fill="none" stroke-opacity="0.7"/>
+          <path id="mLower" d="M112 206 Q140 215 168 206" stroke="#00ffee" stroke-width="1.4" fill="none" stroke-opacity="0.7"/>
+          <path id="mFill"  d="M112 206 Q140 215 168 206 Q158 202 149 205 Q140 199 131 205 Q122 202 112 206Z" fill="#00ffee" fill-opacity="0"/>
+          <path id="mTeeth" d="M118 207 Q140 210 162 207" stroke="#aaffee" stroke-width="0.6" fill="none" stroke-opacity="0" id="teeth"/>
+        </g>
 
-            chars.forEach((char, i) => {
-                if (char === ' ') {
-                    currentTime += pauseDuration * 2;
-                    return;
-                }
-                const freq = charToFreq(char);
-                const type = 'aeiouAEIOU'.includes(char) ? 'sine' : 'sawtooth';
-                playPhoneme(ctx, currentTime, phonemeDuration, freq, type);
-                currentTime += phonemeDuration + pauseDuration;
-            });
+        <!-- Jaw -->
+        <path d="M54 178 Q44 232 114 268" stroke="#00aaff" stroke-width="0.65" fill="none" stroke-opacity="0.22"/>
+        <path d="M226 178 Q236 232 166 268" stroke="#00aaff" stroke-width="0.65" fill="none" stroke-opacity="0.22"/>
+        <path d="M114 268 Q140 278 166 268" stroke="#00aaff" stroke-width="0.6" fill="none" stroke-opacity="0.2"/>
 
-            const totalDuration = (currentTime - ctx.currentTime) * 1000;
-            setTimeout(() => stopSpeaking(), totalDuration + 200);
-        }
+        <!-- Scan bar -->
+        <rect x="32" y="30" width="216" height="20" fill="url(#scanG)" clip-path="url(#fc)">
+          <animate attributeName="y" from="30" to="285" dur="3.2s" repeatCount="indefinite" calcMode="ease-in-out"/>
+        </rect>
 
-        // Web Audio API based speech synthesizer
-        function getAudioContext() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-            return audioCtx;
-        }
+        <!-- Glitch -->
+        <g id="glitch" opacity="0">
+          <line x1="58" y1="138" x2="222" y2="138" stroke="#ff2244" stroke-width="0.8" stroke-opacity="0.55"/>
+          <line x1="58" y1="144" x2="180" y2="144" stroke="#00ffee" stroke-width="0.5" stroke-opacity="0.45"/>
+        </g>
 
-        function playPhoneme(ctx, startTime, duration, freq, type) {
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            const filter = ctx.createBiquadFilter();
+        <text x="38" y="302" fill="#00aaff" font-family="Share Tech Mono,monospace" font-size="6.5" fill-opacity="0.4">AI-TUTOR v4.0 :: CYBERXAVFSIZLIK</text>
+      </svg>
+      <div class="holo-scanlines"></div>
+    </div>
+    <div class="holo-label" id="holoStatus">Tayyor</div>
+  </div>
 
-            osc.type = type || 'sawtooth';
-            osc.frequency.setValueAtTime(freq, startTime);
-            osc.frequency.linearRampToValueAtTime(freq * 0.9, startTime + duration);
+  <!-- PLAYER -->
+  <div class="player-bar">
+    <div class="player-card">
+      <div class="np-info">
+        <div class="np-title" id="npTitle">Dars tanlanmagan</div>
+        <div class="np-sub"   id="npSub">Tugmani bosing → dars boshlanadi</div>
+      </div>
+      <div class="waveform" id="waveform"></div>
+      <div class="p-ctrl">
+        <button class="cbtn" id="btnPrev">◀</button>
+        <button class="cbtn play" id="btnPlay">▶</button>
+        <button class="cbtn" id="btnNext">▶▶</button>
+      </div>
+      <audio id="audioPlayer" crossorigin="anonymous"></audio>
+    </div>
+  </div>
 
-            filter.type = 'lowpass';
-            filter.frequency.setValueAtTime(1200, startTime);
-            filter.frequency.linearRampToValueAtTime(800, startTime + duration);
+  <!-- LESSONS -->
+  <div class="lessons-sec">
+    <div class="sec-hdr">
+      <div class="sec-title">Darslar — <b id="visCount">0</b> ta</div>
+      <div class="legend">
+        <span><span class="ldot cur"></span>Joriy</span>
+        <span><span class="ldot marked"></span>Belgilangan</span>
+      </div>
+    </div>
+    <div class="filter-tabs">
+      <button class="tab on" data-f="all">Barchasi</button>
+      <button class="tab" data-f="audio">Audio bor</button>
+      <button class="tab" data-f="marked">Belgilangan</button>
+    </div>
+    <div class="lessons-grid" id="lessonsGrid"></div>
+  </div>
+</main>
 
-            gain.gain.setValueAtTime(0, startTime);
-            gain.gain.linearRampToValueAtTime(0.15, startTime + 0.02);
-            gain.gain.setValueAtTime(0.15, startTime + duration - 0.03);
-            gain.gain.linearRampToValueAtTime(0, startTime + duration);
+<div class="toast-c" id="toastC"></div>
 
-            osc.connect(filter);
-            filter.connect(gain);
-            gain.connect(ctx.destination);
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  DARSLAR MA'LUMOTLAR BAZASI
+//  Format: { raqam: { url: "dropbox_link", t: "Mavzu nomi" } }
+//  Ko'proq qo'shish uchun quyidagi LESSONS obyektiga yozing.
+// ═══════════════════════════════════════════════════════════════
+const LESSONS = {
+  1:  { url: "https://www.dropbox.com/scl/fi/l4t5esnzx5fftw8vb96tw/1.mp3?rlkey=mh4ohwg1qnhipjhwu6bol9wcv&st=druxub8j&dl=1",  t: "Kirish: Kiberxavfsizlik nima?" },
+  2:  { url: "https://www.dropbox.com/s/EXAMPLE2/dars2.mp3?dl=0",  t: "Tarmoq asoslari (OSI modeli)" },
+  3:  { url: "https://www.dropbox.com/s/EXAMPLE3/dars3.mp3?dl=0",  t: "IP, TCP, UDP protokollari" },
+  4:  { url: "https://www.dropbox.com/s/EXAMPLE4/dars4.mp3?dl=0",  t: "Linux buyruqlar qatori" },
+  5:  { url: "https://www.dropbox.com/s/EXAMPLE5/dars5.mp3?dl=0",  t: "Kali Linux o'rnatish" },
+  6:  { url: "https://www.dropbox.com/s/EXAMPLE6/dars6.mp3?dl=0",  t: "Nmap bilan port skanerlash" },
+  7:  { url: "https://www.dropbox.com/s/EXAMPLE7/dars7.mp3?dl=0",  t: "Metasploit Framework" },
+  8:  { url: "https://www.dropbox.com/s/EXAMPLE8/dars8.mp3?dl=0",  t: "SQL Injection asoslari" },
+  9:  { url: "https://www.dropbox.com/s/EXAMPLE9/dars9.mp3?dl=0",  t: "XSS hujumlari" },
+  10: { url: "https://www.dropbox.com/s/EXAMPLE10/dars10.mp3?dl=0",t: "CSRF va himoya usullari" },
+  // ... shu tartibda 1000 gacha qo'shing
+};
 
-            osc.start(startTime);
-            osc.stop(startTime + duration);
-        }
+// ═══════════════════════════════════════════════════════════════
+//  YORDAMCHI: Dropbox URL → to'g'ridan-to'g'ri yuklovchi URL
+// ═══════════════════════════════════════════════════════════════
+function toDirectUrl(url) {
+  if (!url) return '';
+  return url
+    .replace('www.dropbox.com', 'dl.dropboxusercontent.com')
+    .replace(/[?&]dl=0/, '?dl=1')
+    .replace(/[?&]dl=1/, '?dl=1')
+    + (url.includes('?') ? '' : '?dl=1');
+}
 
-        function charToFreq(char) {
-            const vowels = 'aeiouAEIOU';
-            const code = char.charCodeAt(0);
-            if (vowels.includes(char)) {
-                return 180 + (code % 5) * 30;
-            }
-            return 100 + (code % 10) * 15;
-        }
+// ═══════════════════════════════════════════════════════════════
+//  HOLAT
+// ═══════════════════════════════════════════════════════════════
+const MARK_KEY   = 'cyberace_marked';
+let markedSet    = new Set(JSON.parse(localStorage.getItem(MARK_KEY) || '[]'));
+let currentLesson= null;
+let isPlaying    = false;
+let searchQuery  = '';
+let filterMode   = 'all';
+const TOTAL      = 1000;
 
-        function speakText() {
-            const text = document.getElementById('text-input').value.trim();
-            if (!text || isPlaying) return;
+// Web Audio
+let audioCtx     = null;
+let analyser     = null;
+let sourceNode   = null;
+let audioData    = null;
+let rafId        = null;
+let isTalking    = false;
 
-            isPlaying = true;
-            speakSynthetic(text);
-        }
+// ═══════════════════════════════════════════════════════════════
+//  DOM
+// ═══════════════════════════════════════════════════════════════
+const grid      = document.getElementById('lessonsGrid');
+const audio     = document.getElementById('audioPlayer');
+const btnPlay   = document.getElementById('btnPlay');
+const btnPrev   = document.getElementById('btnPrev');
+const btnNext   = document.getElementById('btnNext');
+const npTitle   = document.getElementById('npTitle');
+const npSub     = document.getElementById('npSub');
+const holoSt    = document.getElementById('holoStatus');
+const searchInp = document.getElementById('searchInput');
+const totalEl   = document.getElementById('totalCount');
+const markedEl  = document.getElementById('markedCount');
+const visEl     = document.getElementById('visCount');
+const waveformEl= document.getElementById('waveform');
 
-        function startAnimation() {
-            const mouth = document.getElementById('mouth');
-            const bars = [
-                document.getElementById('bar1'),
-                document.getElementById('bar2'),
-                document.getElementById('bar3'),
-                document.getElementById('bar4'),
-                document.getElementById('bar5')
-            ];
+const mUpper    = document.getElementById('mUpper');
+const mLower    = document.getElementById('mLower');
+const mFill     = document.getElementById('mFill');
+const teeth     = document.getElementById('mTeeth');
+const glitch    = document.getElementById('glitch');
 
-            const animationInterval = setInterval(() => {
-                if (!isPlaying) {
-                    clearInterval(animationInterval);
-                    return;
-                }
-                mouth.classList.toggle('speaking');
-                bars.forEach(bar => {
-                    bar.style.height = (6 + Math.random() * 24) + 'px';
-                });
-                if (Math.random() < 0.05) {
-                    document.getElementById('eye-left').classList.add('blink');
-                    document.getElementById('eye-right').classList.add('blink');
-                    setTimeout(() => {
-                        document.getElementById('eye-left').classList.remove('blink');
-                        document.getElementById('eye-right').classList.remove('blink');
-                    }, 150);
-                }
-            }, 100);
-        }
+// ═══════════════════════════════════════════════════════════════
+//  WAVEFORM BARS (vizual)
+// ═══════════════════════════════════════════════════════════════
+const BAR_N = 18;
+const wBars = [];
+for (let i = 0; i < BAR_N; i++) {
+  const b = document.createElement('div');
+  b.className = 'wbar';
+  waveformEl.appendChild(b);
+  wBars.push(b);
+}
 
-        function stopSpeaking() {
-            isPlaying = false;
-            if (currentAudio) {
-                currentAudio.pause();
-                currentAudio = null;
-            }
-            document.getElementById('mouth').classList.remove('speaking');
-            document.getElementById('speech-bubble').classList.remove('visible');
-            ['bar1','bar2','bar3','bar4','bar5'].forEach(id => {
-                document.getElementById(id).style.height = '8px';
-            });
-        }
+// ═══════════════════════════════════════════════════════════════
+//  WEB AUDIO SETUP — faqat bir marta yaratiladi
+// ═══════════════════════════════════════════════════════════════
+function initAudioCtx() {
+  if (audioCtx) return;
+  audioCtx  = new (window.AudioContext || window.webkitAudioContext)();
+  analyser  = audioCtx.createAnalyser();
+  analyser.fftSize = 64;
+  audioData = new Uint8Array(analyser.frequencyBinCount);
+  sourceNode = audioCtx.createMediaElementSource(audio);
+  sourceNode.connect(analyser);
+  analyser.connect(audioCtx.destination);
+}
 
-        // Element SDK
-        const defaultConfig = {
-            page_title: "🤖 Darslik Robot",
-            header_text: "Darsliklarni o'qing va robot gapirib beradi"
-        };
+// ═══════════════════════════════════════════════════════════════
+//  ANIMATSIYA LOOP — audio danasidan real-vaqt og'iz + to'lqin
+// ═══════════════════════════════════════════════════════════════
+function animLoop() {
+  rafId = requestAnimationFrame(animLoop);
 
-        function applyConfig(config) {
-            document.getElementById('page-title').textContent = config.page_title || defaultConfig.page_title;
-            document.getElementById('header-text').textContent = config.header_text || defaultConfig.header_text;
-        }
+  if (!analyser) return;
+  analyser.getByteFrequencyData(audioData);
 
-        window.elementSdk.init({
-            defaultConfig,
-            onConfigChange: async (config) => { applyConfig(config); },
-            mapToCapabilities: (config) => ({
-                recolorables: [],
-                borderables: [],
-                fontEditable: undefined,
-                fontSizeable: undefined
-            }),
-            mapToEditPanelValues: (config) => new Map([
-                ["page_title", config.page_title || defaultConfig.page_title],
-                ["header_text", config.header_text || defaultConfig.header_text]
-            ])
-        });
+  // O'rtacha amplituda (past chastotalar — nutq uchun muhim)
+  let sum = 0;
+  const n = Math.min(12, audioData.length);
+  for (let i = 0; i < n; i++) sum += audioData[i];
+  const avg = sum / n / 255; // 0..1
 
-        renderLessonsList();
-        lucide.createIcons();
-    </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a01b5e09ef1197a2',t:'MTc3OTc4MzY5Ng=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  // Og'iz qimirlashi — analayzer danasidan, kechikishsiz
+  updateMouth(avg);
+
+  // Waveform barlar
+  for (let i = 0; i < BAR_N; i++) {
+    const idx = Math.floor(i * audioData.length / BAR_N);
+    const v   = audioData[idx] / 255;
+    const h   = isPlaying ? Math.max(3, v * 28) : 3;
+    wBars[i].style.height = h + 'px';
+    wBars[i].classList.toggle('on', isPlaying && v > 0.3);
+  }
+
+  // Tasodifiy glitch
+  if (isPlaying && Math.random() < 0.008) {
+    glitch.setAttribute('opacity', '0.8');
+    setTimeout(() => glitch.setAttribute('opacity', '0'), 70);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  OG'IZ SVG YANGILASH
+// ═══════════════════════════════════════════════════════════════
+function updateMouth(amp) {
+  const cy   = 206;
+  const open = amp * 18;   // maks 18px ochiladi
+  const uRise= amp * 5;    // yuqori lab ko'tarilishi
+
+  mUpper.setAttribute('d',
+    `M112 ${cy} Q122 ${cy-uRise*0.8} 131 ${cy-uRise*0.5} Q140 ${cy-uRise} 149 ${cy-uRise*0.5} Q158 ${cy-uRise*0.8} 168 ${cy}`
+  );
+  mLower.setAttribute('d',
+    `M112 ${cy} Q140 ${cy+open} 168 ${cy}`
+  );
+  mFill.setAttribute('d',
+    `M112 ${cy} Q122 ${cy-uRise*0.8} 131 ${cy-uRise*0.5} Q140 ${cy-uRise} 149 ${cy-uRise*0.5} Q158 ${cy-uRise*0.8} 168 ${cy} Q140 ${cy+open} 112 ${cy}Z`
+  );
+  mFill.setAttribute('fill-opacity', (amp * 0.35).toString());
+  teeth.setAttribute('stroke-opacity', (amp > 0.2 ? amp * 0.6 : 0).toString());
+}
+
+function resetMouth() {
+  mUpper.setAttribute('d','M112 206 Q122 202 131 205 Q140 199 149 205 Q158 202 168 206');
+  mLower.setAttribute('d','M112 206 Q140 215 168 206');
+  mFill.setAttribute('fill-opacity','0');
+  teeth.setAttribute('stroke-opacity','0');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  AUDIO — ijro
+// ═══════════════════════════════════════════════════════════════
+function playLesson(num) {
+  const data = LESSONS[num];
+  if (!data || !data.url) { toast('Bu dars uchun audio yo\'q', true); return; }
+
+  initAudioCtx();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+
+  currentLesson = num;
+  audio.src = toDirectUrl(data.url);
+
+  audio.play().then(() => {
+    isPlaying = true;
+    btnPlay.textContent = '⏸';
+    npTitle.textContent = `Dars ${num}${data.t ? ' — ' + data.t : ''}`;
+    npSub.textContent   = 'Ijro etilmoqda...';
+    holoSt.textContent  = 'Dars ' + num;
+    isTalking = true;
+    if (!rafId) animLoop();
+    renderGrid();
+    toast(`▶ Dars ${num} boshlandi`);
+  }).catch(e => {
+    toast('Audio yuklanmadi. URL ni tekshiring.', true);
+    console.error(e);
+  });
+}
+
+function togglePlay() {
+  if (!currentLesson) { toast('Avval dars tanlang', true); return; }
+  initAudioCtx();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  if (audio.paused) {
+    audio.play();
+    isPlaying  = true;
+    isTalking  = true;
+    btnPlay.textContent = '⏸';
+    if (!rafId) animLoop();
+  } else {
+    audio.pause();
+    isPlaying  = false;
+    isTalking  = false;
+    btnPlay.textContent = '▶';
+    npSub.textContent   = 'Pauza';
+    holoSt.textContent  = 'Pauza';
+    resetMouth();
+  }
+}
+
+audio.addEventListener('ended', () => {
+  isPlaying = false; isTalking = false;
+  btnPlay.textContent = '▶';
+  npSub.textContent   = 'Tugadi ✓';
+  holoSt.textContent  = 'Tayyor';
+  resetMouth();
+});
+
+audio.addEventListener('error', () => {
+  isPlaying = false; isTalking = false;
+  btnPlay.textContent = '▶';
+  npSub.textContent   = 'Xatolik!';
+  resetMouth();
+});
+
+btnPlay.addEventListener('click', togglePlay);
+
+btnPrev.addEventListener('click', () => {
+  if (!currentLesson) return;
+  for (let n = currentLesson - 1; n >= 1; n--) {
+    if (LESSONS[n]) { playLesson(n); return; }
+  }
+  toast('Oldingi dars yo\'q', true);
+});
+
+btnNext.addEventListener('click', () => {
+  if (!currentLesson) return;
+  for (let n = currentLesson + 1; n <= TOTAL; n++) {
+    if (LESSONS[n]) { playLesson(n); return; }
+  }
+  toast('Keyingi dars yo\'q', true);
+});
+
+// ═══════════════════════════════════════════════════════════════
+//  GRID
+// ═══════════════════════════════════════════════════════════════
+function renderGrid() {
+  const q  = searchQuery.trim().toLowerCase();
+  let vis  = 0;
+  grid.innerHTML = '';
+
+  for (let n = 1; n <= TOTAL; n++) {
+    const data     = LESSONS[n] || null;
+    const hasAudio = !!(data && data.url);
+    const isMarked = markedSet.has(n);
+    const isCur    = n === currentLesson;
+
+    if (filterMode === 'audio'  && !hasAudio) continue;
+    if (filterMode === 'marked' && !isMarked) continue;
+    if (q) {
+      const ts = data && data.t ? data.t.toLowerCase() : '';
+      if (!n.toString().includes(q) && !ts.includes(q)) continue;
+    }
+
+    vis++;
+    const btn = document.createElement('button');
+    btn.className = 'lbtn' +
+      (isCur    ? ' cur'    : '') +
+      (isMarked ? ' marked' : '') +
+      (!hasAudio? ' no-aud' : '');
+    btn.setAttribute('data-n', n);
+    btn.title = data && data.t
+      ? `${n}: ${data.t}`
+      : `Dars ${n}${hasAudio ? '' : ' (audio yo\'q)'}`;
+    btn.innerHTML = `<span>${n}</span><span class="mdot"></span>`;
+
+    // Bosish: qisqa = ijro, uzoq = belgilash
+    let pt = null;
+    const sP = () => { pt = setTimeout(() => { toggleMark(n, btn); pt = null; }, 500); };
+    const eP = () => { if (pt) { clearTimeout(pt); pt = null; if (hasAudio) playLesson(n); } };
+    const cP = () => { if (pt) { clearTimeout(pt); pt = null; } };
+
+    btn.addEventListener('mousedown', sP);
+    btn.addEventListener('mouseup',   eP);
+    btn.addEventListener('mouseleave',cP);
+    btn.addEventListener('touchstart', e => { e.preventDefault(); sP(); }, {passive: false});
+    btn.addEventListener('touchend',   eP);
+    btn.addEventListener('touchcancel',cP);
+
+    grid.appendChild(btn);
+  }
+
+  visEl.textContent    = vis;
+  totalEl.textContent  = Object.keys(LESSONS).length;
+  markedEl.textContent = markedSet.size;
+}
+
+function toggleMark(n, btn) {
+  if (markedSet.has(n)) {
+    markedSet.delete(n);
+    btn.classList.remove('marked');
+    toast(`Dars ${n} belgisi olib tashlandi`);
+  } else {
+    markedSet.add(n);
+    btn.classList.add('marked');
+    toast(`Dars ${n} qizil belgilandi 🔴`);
+  }
+  localStorage.setItem(MARK_KEY, JSON.stringify([...markedSet]));
+  markedEl.textContent = markedSet.size;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  SEARCH & FILTER
+// ═══════════════════════════════════════════════════════════════
+searchInp.addEventListener('input', () => { searchQuery = searchInp.value; renderGrid(); });
+
+document.querySelectorAll('.tab').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('on','on-red'));
+    filterMode = b.dataset.f;
+    if (filterMode === 'marked') b.classList.add('on-red');
+    else b.classList.add('on');
+    renderGrid();
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════════════════
+function toast(msg, err = false) {
+  const t = document.createElement('div');
+  t.className = 'toast' + (err ? ' err' : '');
+  t.textContent = msg;
+  document.getElementById('toastC').appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════════
+renderGrid();
+toast('💡 Dars tugmasini bosing → audio boshlanadi');
+</script>
+</body>
 </html>
